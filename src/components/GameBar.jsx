@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 
-const GameBar = ({ onDifficultyChange, mistakes, score, timer, isPaused, onPauseToggle, onRestart }) => {
-    const [difficulty, setDifficulty] = useState("medium");
-
+const GameBar = ({ difficulty, onDifficultyChange, mistakes, score, timer, isPaused, onPauseToggle, onRestart }) => {
     const handleDifficultyChange = (event) => {
         const selectedDifficulty = event.target.value;
-        setDifficulty(selectedDifficulty);
         onDifficultyChange(selectedDifficulty);
     };
 

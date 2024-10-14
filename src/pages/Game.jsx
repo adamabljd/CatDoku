@@ -1,37 +1,77 @@
 import React, { useState, useEffect } from "react";
-import Grid from "./Grid";
-import CatsRow from "./CatsRow";
-import GameBar from "./GameBar";
+import Grid from "../components/Grid";
+import CatsRow from "../components/CatsRow";
+import GameBar from "../components/GameBar";
 
-const Game = () => {
-  const [grid, setGrid] = useState(
-    Array(9)
-      .fill(null)
-      .map(() => Array(9).fill(null))
-  );
-  const [initialGrid, setInitialGrid] = useState(
-    Array(9)
-      .fill(null)
-      .map(() => Array(9).fill(false)) // False means cell is user-editable
-  );
-  const [solutionGrid, setSolutionGrid] = useState(
-    Array(9)
-      .fill(null)
-      .map(() => Array(9).fill(null))
-  );
-  const [selectedCell, setSelectedCell] = useState(null);
-  const [selectedNumber, setSelectedNumber] = useState(null);
-  const [isSelected, setIsSelected] = useState(false);
-  const [difficulty, setDifficulty] = useState("medium");
-  const [gameWon, setGameWon] = useState(false);
-  const [mistakes, setMistakes] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
-  const [timer, setTimer] = useState(0);
-  const [mistakenCells, setMistakenCells] = useState([]);
-  const [correctCells, setCorrectCells] = useState([]);
-  const [isRunning, setIsRunning] = useState(true);
-  const [isPaused, setIsPaused] = useState(false);
+const Game = ({ isResuming }) => {
+  const loadSavedState = (key, defaultValue) => {
+    const savedState = isResuming ? localStorage.getItem(key) : null;
+    try {
+      return savedState !== null ? JSON.parse(savedState) : defaultValue;
+    } catch (error) {
+      return savedState !== null ? savedState : defaultValue;
+    }
+  };
+
+  const [grid, setGrid] = useState(() => loadSavedState("grid", Array(9).fill(null).map(() => Array(9).fill(null))));
+  const [initialGrid, setInitialGrid] = useState(() => loadSavedState("initialGrid", Array(9).fill(null).map(() => Array(9).fill(false))));
+  const [solutionGrid, setSolutionGrid] = useState(() => loadSavedState("solutionGrid", Array(9).fill(null).map(() => Array(9).fill(null))));
+  const [selectedCell, setSelectedCell] = useState(() => loadSavedState("selectedCell", null));
+  const [selectedNumber, setSelectedNumber] = useState(() => loadSavedState("selectedNumber", null));
+  const [isSelected, setIsSelected] = useState(() => loadSavedState("isSelected", false));
+  const [difficulty, setDifficulty] = useState(() => loadSavedState("difficulty", "medium"));
+  const [gameWon, setGameWon] = useState(() => loadSavedState("gameWon", false));
+  const [mistakes, setMistakes] = useState(() => loadSavedState("mistakes", 0));
+  const [gameOver, setGameOver] = useState(() => loadSavedState("gameOver", false));
+  const [score, setScore] = useState(() => loadSavedState("score", 0));
+  const [timer, setTimer] = useState(() => loadSavedState("timer", 0));
+  const [mistakenCells, setMistakenCells] = useState(() => loadSavedState("mistakenCells", []));
+  const [correctCells, setCorrectCells] = useState(() => loadSavedState("correctCells", []));
+  const [isRunning, setIsRunning] = useState(() => loadSavedState("isRunning", true));
+  const [isPaused, setIsPaused] = useState(() => loadSavedState("isPaused", false));
+
+  useEffect(() => {
+    if (!isResuming) {
+      initGame();
+    }
+  }, [isResuming])
+
+  // Save game state in individual keys
+  useEffect(() => {
+    localStorage.setItem("grid", JSON.stringify(grid));
+    localStorage.setItem("initialGrid", JSON.stringify(initialGrid));
+    localStorage.setItem("solutionGrid", JSON.stringify(solutionGrid));
+    localStorage.setItem("selectedCell", JSON.stringify(selectedCell));
+    localStorage.setItem("selectedNumber", JSON.stringify(selectedNumber));
+    localStorage.setItem("isSelected", JSON.stringify(isSelected));
+    localStorage.setItem("difficulty", difficulty);
+    localStorage.setItem("gameWon", JSON.stringify(gameWon));
+    localStorage.setItem("mistakes", JSON.stringify(mistakes));
+    localStorage.setItem("gameOver", JSON.stringify(gameOver));
+    localStorage.setItem("score", JSON.stringify(score));
+    localStorage.setItem("timer", JSON.stringify(timer));
+    localStorage.setItem("mistakenCells", JSON.stringify(mistakenCells));
+    localStorage.setItem("correctCells", JSON.stringify(correctCells));
+    localStorage.setItem("isRunning", JSON.stringify(isRunning));
+    localStorage.setItem("isPaused", JSON.stringify(isPaused));
+  }, [
+    grid,
+    initialGrid,
+    solutionGrid,
+    selectedCell,
+    selectedNumber,
+    isSelected,
+    difficulty,
+    gameWon,
+    mistakes,
+    gameOver,
+    score,
+    timer,
+    mistakenCells,
+    correctCells,
+    isRunning,
+    isPaused,
+  ]);
 
   const initGame = () => {
     setSelectedCell(null);
@@ -46,7 +86,7 @@ const Game = () => {
     setTimer(0);
     setIsRunning(true);
     setIsPaused(false);
-    fillGridWithRandomNumbers(difficulty); 
+    fillGridWithRandomNumbers(difficulty);
   };
 
   // Function to start the timer
@@ -168,7 +208,6 @@ const Game = () => {
   };
 
   //------------------------------ GAME'S CORE MECANICS ----------------------------------------------
-
   // Function to check if a number can be placed in a cell
   const isValidPlacement = (grid, row, col, number) => {
     // Check the row for the number
@@ -310,6 +349,7 @@ const Game = () => {
 
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty);
+    initGame()
   };
 
   const checkUserSelection = (row, col, selectedNumber) => {
@@ -333,14 +373,10 @@ const Game = () => {
     }
   };
 
-  useEffect(() => {
-    initGame();
-    fillGridWithRandomNumbers(difficulty);
-  }, [difficulty]);
-
   return (
     <div className="space-y-10">
       <GameBar
+        difficulty={difficulty}
         onDifficultyChange={handleDifficultyChange}
         mistakes={mistakes}
         score={score}
