@@ -3,7 +3,7 @@ import Grid from "../components/Grid";
 import CatsRow from "../components/CatsRow";
 import GameBar from "../components/GameBar";
 
-const Game = ({ isResuming }) => {
+const Game = ({ isResuming, mistakesAllowed }) => {
   const loadSavedState = (key, defaultValue) => {
     const savedState = isResuming ? localStorage.getItem(key) : null;
     try {
@@ -29,6 +29,8 @@ const Game = ({ isResuming }) => {
   const [correctCells, setCorrectCells] = useState(() => loadSavedState("correctCells", []));
   const [isRunning, setIsRunning] = useState(() => loadSavedState("isRunning", true));
   const [isPaused, setIsPaused] = useState(() => loadSavedState("isPaused", false));
+  const [isNotesMode, setIsNotesMode] = useState(false);
+
 
   useEffect(() => {
     if (!isResuming) {
@@ -130,14 +132,29 @@ const Game = ({ isResuming }) => {
   const handleNumberClick = (number) => {
     if (selectedCell) {
       const newGrid = [...grid];
-      newGrid[selectedCell.row][selectedCell.col] = number;
-      checkUserSelection(selectedCell.row, selectedCell.col, number);
+      if (isNotesMode) {
+        // Store the number as a note (a visual draft)
+        newGrid[selectedCell.row][selectedCell.col] = `(${number})`;
+
+        // Remove the cell from mistakenCells if a note is added
+        setMistakenCells((prev) =>
+          prev.filter(
+            (cell) =>
+              !(cell.row === selectedCell.row && cell.col === selectedCell.col)
+          )
+        );
+      } else {
+        // Normal mode: handle mistakes and correct answers
+        newGrid[selectedCell.row][selectedCell.col] = number;
+        checkUserSelection(selectedCell.row, selectedCell.col, number);
+      }
       setGrid(newGrid);
       setSelectedCell(null);
       setIsSelected(false);
-      checkIfGameWon(newGrid);
+      if (!isNotesMode) {
+        checkIfGameWon(newGrid);
+      }
     }
-    setSelectedNumber(number);
   };
 
   // Function to handle the erase button click
@@ -165,8 +182,21 @@ const Game = ({ isResuming }) => {
     }
   };
 
+  const toggleNotesMode = () => {
+    setIsNotesMode((prev) => !prev);
+  };
+
   // Function to check if the entire grid is correctly filled
   const checkIfGameWon = (grid) => {
+    // Check if any cells contain a note (not fully completed)
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (typeof grid[row][col] === "string" && grid[row][col].includes("(")) {
+          return; // Exit: can't win with notes in the grid
+        }
+      }
+    }
+
     // Helper to check if an array contains numbers 1-9 without duplicates
     const isValidSet = (arr) => {
       const set = new Set(arr);
@@ -361,7 +391,7 @@ const Game = ({ isResuming }) => {
         prev.filter((cell) => !(cell.row === row && cell.col === col))
       );
       setMistakenCells((prev) => [...prev, { row, col }]);
-      if (mistakes + 1 >= 3) {
+      if (mistakes + 1 >= mistakesAllowed) {
         setGameOver(true);
       }
     } else {
@@ -375,26 +405,28 @@ const Game = ({ isResuming }) => {
 
   return (
     <div className="space-y-10">
-      <GameBar
-        difficulty={difficulty}
-        onDifficultyChange={handleDifficultyChange}
-        mistakes={mistakes}
-        score={score}
-        timer={formatTime(timer)}
-        isPaused={isPaused}
-        onPauseToggle={togglePause}
-        onRestart={initGame}
-      />
+
       {gameOver ? (
-        <div className="text-3xl font-bold text-red-600">
-          Game Over! You've made 3 mistakes.
+        <div className="text-3xl font-bold px-2 text-red-600">
+          Game Over! You've made {mistakesAllowed} mistake(s).
         </div>
       ) : gameWon ? (
-        <div className="text-3xl font-bold text-green-600">
+        <div className="text-3xl font-bold px-2 text-green-600">
           Congratulations, You Won!
         </div>
       ) : (
         <>
+          <GameBar
+            difficulty={difficulty}
+            onDifficultyChange={handleDifficultyChange}
+            mistakes={mistakes}
+            score={score}
+            timer={formatTime(timer)}
+            isPaused={isPaused}
+            onPauseToggle={togglePause}
+            onRestart={initGame}
+            mistakesAllowed={mistakesAllowed}
+          />
           <Grid
             grid={grid}
             initialGrid={initialGrid}
@@ -409,6 +441,12 @@ const Game = ({ isResuming }) => {
             isSelected={isSelected}
             onEraseClick={handleEraseClick}
           />
+          <button
+            className={`bg-yellow-500 text-white px-4 py-2 rounded-lg text-lg ${isNotesMode ? 'opacity-100' : 'opacity-50'}`}
+            onClick={toggleNotesMode}
+          >
+            {isNotesMode ? 'Notes Mode: ON' : 'Notes Mode: OFF'}
+          </button>
         </>
       )}
     </div>

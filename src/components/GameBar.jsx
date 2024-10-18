@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const GameBar = ({ difficulty, onDifficultyChange, mistakes, score, timer, isPaused, onPauseToggle, onRestart }) => {
+const GameBar = ({ difficulty, onDifficultyChange, mistakes, score, timer, isPaused, onPauseToggle, onRestart, mistakesAllowed }) => {
     const handleDifficultyChange = (event) => {
         const selectedDifficulty = event.target.value;
         onDifficultyChange(selectedDifficulty);
@@ -20,7 +20,7 @@ const GameBar = ({ difficulty, onDifficultyChange, mistakes, score, timer, isPau
                     <option value="hard">Hard</option>
                 </select>
             </div>
-            <div>Mistakes {mistakes}/3</div>
+            {mistakesAllowed < 10 && <div>Mistakes {mistakes}/{mistakesAllowed}</div>}
             <div>Score : {score}</div>
             <div>{timer}</div>
             <button className="bg-gray-300 rounded-md p-1 text-xs" onClick={onPauseToggle}>
