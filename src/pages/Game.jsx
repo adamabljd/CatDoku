@@ -23,7 +23,6 @@ const Game = ({ isResuming, mistakesAllowed }) => {
   const [gameWon, setGameWon] = useState(() => loadSavedState("gameWon", false));
   const [mistakes, setMistakes] = useState(() => loadSavedState("mistakes", 0));
   const [gameOver, setGameOver] = useState(() => loadSavedState("gameOver", false));
-  const [score, setScore] = useState(() => loadSavedState("score", 0));
   const [timer, setTimer] = useState(() => loadSavedState("timer", 0));
   const [mistakenCells, setMistakenCells] = useState(() => loadSavedState("mistakenCells", []));
   const [correctCells, setCorrectCells] = useState(() => loadSavedState("correctCells", []));
@@ -50,7 +49,6 @@ const Game = ({ isResuming, mistakesAllowed }) => {
     localStorage.setItem("gameWon", JSON.stringify(gameWon));
     localStorage.setItem("mistakes", JSON.stringify(mistakes));
     localStorage.setItem("gameOver", JSON.stringify(gameOver));
-    localStorage.setItem("score", JSON.stringify(score));
     localStorage.setItem("timer", JSON.stringify(timer));
     localStorage.setItem("mistakenCells", JSON.stringify(mistakenCells));
     localStorage.setItem("correctCells", JSON.stringify(correctCells));
@@ -67,7 +65,6 @@ const Game = ({ isResuming, mistakesAllowed }) => {
     gameWon,
     mistakes,
     gameOver,
-    score,
     timer,
     mistakenCells,
     correctCells,
@@ -81,7 +78,6 @@ const Game = ({ isResuming, mistakesAllowed }) => {
     setIsSelected(false);
     setGameWon(false);
     setMistakes(0);
-    setScore(0);
     setGameOver(false);
     setMistakenCells([]);
     setCorrectCells([]);
@@ -399,12 +395,11 @@ const Game = ({ isResuming, mistakesAllowed }) => {
         prev.filter((cell) => !(cell.row === row && cell.col === col))
       );
       setCorrectCells((prev) => [...prev, { row, col }]);
-      setScore((prev) => prev + 10); // Increment score by 10 for correct answer
     }
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-5">
 
       {gameOver ? (
         <div className="text-3xl font-bold px-2 text-red-600">
@@ -420,7 +415,6 @@ const Game = ({ isResuming, mistakesAllowed }) => {
             difficulty={difficulty}
             onDifficultyChange={handleDifficultyChange}
             mistakes={mistakes}
-            score={score}
             timer={formatTime(timer)}
             isPaused={isPaused}
             onPauseToggle={togglePause}
@@ -440,13 +434,10 @@ const Game = ({ isResuming, mistakesAllowed }) => {
             onNumberClick={handleNumberClick}
             isSelected={isSelected}
             onEraseClick={handleEraseClick}
+            isNotesMode={isNotesMode}
+            toggleNotesMode={toggleNotesMode}
           />
-          <button
-            className={`bg-yellow-500 text-white px-4 py-2 rounded-lg text-lg ${isNotesMode ? 'opacity-100' : 'opacity-50'}`}
-            onClick={toggleNotesMode}
-          >
-            {isNotesMode ? 'Notes Mode: ON' : 'Notes Mode: OFF'}
-          </button>
+          
         </>
       )}
     </div>

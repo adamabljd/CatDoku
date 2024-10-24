@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Game from './pages/Game';
 import MainMenuPage from './pages/MainMenuPage';
+import houseLogo from './assets/house.svg'
 
 function App() {
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -30,11 +31,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-beige px-3">
       {isGameStarted ? (
         <div className="flex flex-col justify-center items-center">
           <Game isResuming={isResuming} mistakesAllowed={mistakesAllowed} onReturnToMenu={handleReturnToMenu} />
-          <button className='bg-orange-900 text-white rounded-md w-fit p-2 mt-2' onClick={handleReturnToMenu}>Return to main menu</button>
+          <button className='bg-stone-400 shadow-md text-white rounded-md w-fit p-2 mt-4' onClick={handleReturnToMenu}><img src={houseLogo} alt='house' className='h-7 w-7' /></button>
         </div>
       ) : (
         <MainMenuPage onStartGame={handleStartGame} onResumeGame={handleResumeGame} />

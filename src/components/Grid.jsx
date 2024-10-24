@@ -28,9 +28,9 @@ const Grid = ({ grid, initialGrid, selectedCell, onCellClick, mistakenCells, cor
   }
 
   return (
-    <div className="grid grid-cols-3 border-4 border-black bg-white">
+    <div className="grid grid-cols-3 border-2 rounded border-slate-900 bg-white">
       {subGrids.map((subGrid, index) => (
-        <div key={index} className="border border-black">
+        <div key={index} className="border border-slate-900 w-full h-fit">
           <SubGrid
             subGrid={subGrid}
             onCellClick={onCellClick}
