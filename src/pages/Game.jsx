@@ -3,7 +3,7 @@ import Grid from "../components/Grid";
 import CatsRow from "../components/CatsRow";
 import GameBar from "../components/GameBar";
 
-const Game = ({ isResuming, mistakesAllowed }) => {
+const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   const loadSavedState = (key, defaultValue) => {
     const savedState = isResuming ? localStorage.getItem(key) : null;
     try {
@@ -13,13 +13,14 @@ const Game = ({ isResuming, mistakesAllowed }) => {
     }
   };
 
+  const difficulty = loadSavedState("difficulty", initialDifficulty);
+
   const [grid, setGrid] = useState(() => loadSavedState("grid", Array(9).fill(null).map(() => Array(9).fill(null))));
   const [initialGrid, setInitialGrid] = useState(() => loadSavedState("initialGrid", Array(9).fill(null).map(() => Array(9).fill(false))));
   const [solutionGrid, setSolutionGrid] = useState(() => loadSavedState("solutionGrid", Array(9).fill(null).map(() => Array(9).fill(null))));
   const [selectedCell, setSelectedCell] = useState(() => loadSavedState("selectedCell", null));
   const [selectedNumber, setSelectedNumber] = useState(() => loadSavedState("selectedNumber", null));
   const [isSelected, setIsSelected] = useState(() => loadSavedState("isSelected", false));
-  const [difficulty, setDifficulty] = useState(() => loadSavedState("difficulty", "medium"));
   const [gameWon, setGameWon] = useState(() => loadSavedState("gameWon", false));
   const [mistakes, setMistakes] = useState(() => loadSavedState("mistakes", 0));
   const [gameOver, setGameOver] = useState(() => loadSavedState("gameOver", false));
@@ -269,17 +270,17 @@ const Game = ({ isResuming, mistakesAllowed }) => {
 
     let maxFilledCells, minFilledCells, fillChance;
     switch (difficulty) {
-      case "easy":
+      case "Easy":
         maxFilledCells = 8;
         minFilledCells = 4;
         fillChance = 0.8;
         break;
-      case "medium":
+      case "Medium":
         maxFilledCells = 6;
         minFilledCells = 3;
         fillChance = 0.8;
         break;
-      case "hard":
+      case "Hard":
         maxFilledCells = 5;
         minFilledCells = 2;
         fillChance = 0.5;
@@ -373,11 +374,6 @@ const Game = ({ isResuming, mistakesAllowed }) => {
     setInitialGrid(newInitialGrid); // Tracks locked cells
   };
 
-  const handleDifficultyChange = (newDifficulty) => {
-    setDifficulty(newDifficulty);
-    initGame()
-  };
-
   const checkUserSelection = (row, col, selectedNumber) => {
     const correctNumber = solutionGrid[row][col];
 
@@ -413,7 +409,6 @@ const Game = ({ isResuming, mistakesAllowed }) => {
         <>
           <GameBar
             difficulty={difficulty}
-            onDifficultyChange={handleDifficultyChange}
             mistakes={mistakes}
             timer={formatTime(timer)}
             isPaused={isPaused}
@@ -437,7 +432,7 @@ const Game = ({ isResuming, mistakesAllowed }) => {
             isNotesMode={isNotesMode}
             toggleNotesMode={toggleNotesMode}
           />
-          
+
         </>
       )}
     </div>
