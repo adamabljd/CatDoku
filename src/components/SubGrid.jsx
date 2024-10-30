@@ -9,7 +9,7 @@ import cat7 from "../assets/cats/Catdoku 7.png"
 import cat8 from "../assets/cats/Catdoku 8.png"
 import cat9 from "../assets/cats/Catdoku 9.png"
 
-const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCells, isPaused }) => {
+const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCells, isPaused, notesGrid }) => {
   const catImages = [null, cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
 
   return (
@@ -36,14 +36,24 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
               ${isCorrectCell ? "bg-green-300" : ""} 
               ${isHighlighted ? "bg-yellow-200" : ""}
               ${isLocked ? "bg-gray-200" : ""}
-              ${!isPaused && !isLocked ? "hover:cursor-pointer" : ""} 
+              ${!isPaused && !isLocked && !isCorrectCell ? "hover:cursor-pointer" : ""} 
               ${isPaused ? "bg-white" : ""}
               `}
             onClick={() => !isLocked && onCellClick(row, col)}
           >
-            {isPaused ? "" : number !== null && number >= 1 && number <= 9 ? (
-              <img src={catImages[number]} alt={`Cat ${number}`} className={`${!isMistakenCell && !isCorrectCell && !isLocked ? "w-7 h-7" : "w-full h-full"}`} />
-            ) : ""}
+            {isPaused ? (
+              ""
+            ) : notesGrid[row][col].length ? (
+              <div className="grid grid-cols-3 gap-1 w-full h-full">
+                {notesGrid[row][col].map((note, i) => (
+                  <img key={i} src={catImages[note]} alt={`Cat note ${note}`} className="w-4 h-4" />
+                ))}
+              </div>
+            ) : (
+              number !== null && number >= 1 && number <= 9 ? (
+                <img src={catImages[number]} alt={`Cat ${number}`} className="w-full h-full" />
+              ) : ""
+            )}
           </div>
         );
       })}

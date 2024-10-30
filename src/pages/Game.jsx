@@ -24,6 +24,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   const [isPaused, setIsPaused] = useState(false);
   const [isNotesMode, setIsNotesMode] = useState(false);
   const [maxMistakes, setMaxMistakes] = useState(mistakesAllowed)
+  const [notesGrid, setNotesGrid] = useState(Array(9).fill(null).map(() => Array(9).fill(null).map(() => [])));
+
 
   const loadSavedState = async (key, defaultValue) => {
     const savedState = isResuming ? await Storage.get({ key }) : null;
@@ -50,7 +52,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
           loadedMistakenCells,
           loadedCorrectCells,
           loadedIsRunning,
-          loadedIsPaused
+          loadedIsPaused,
+          loadedNotesGrid
         ] = await Promise.all([
           loadSavedState("difficulty", initialDifficulty),
           loadSavedState("maxMistakes", maxMistakes),
@@ -64,7 +67,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
           loadSavedState("mistakenCells", []),
           loadSavedState("correctCells", []),
           loadSavedState("isRunning", true),
-          loadSavedState("isPaused", false)
+          loadSavedState("isPaused", false),
+          loadSavedState("notesGrid", Array(9).fill(null).map(() => Array(9).fill(null).map(() => []))),
         ]);
 
         // Set all states at once after loading
@@ -81,6 +85,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         setCorrectCells(loadedCorrectCells);
         setIsRunning(loadedIsRunning);
         setIsPaused(loadedIsPaused);
+        setNotesGrid(loadedNotesGrid)
       } else {
         initGame();
       }
@@ -107,10 +112,11 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         await Storage.set({ key: 'correctCells', value: JSON.stringify(correctCells) });
         await Storage.set({ key: 'isRunning', value: JSON.stringify(isRunning) });
         await Storage.set({ key: 'isPaused', value: JSON.stringify(isPaused) });
+        await Storage.set( { key: 'notesGrid', value: JSON.stringify(notesGrid) })
       };
       saveGameState();
     }
-  }, [grid, initialGrid, solutionGrid, selectedCell, selectedNumber, isSelected, difficulty, maxMistakes, gameWon, mistakes, gameOver, timer, mistakenCells, correctCells, isRunning, isPaused, isLoaded]);
+  }, [grid, initialGrid, notesGrid, solutionGrid, selectedCell, selectedNumber, isSelected, difficulty, maxMistakes, gameWon, mistakes, gameOver, timer, mistakenCells, correctCells, isRunning, isPaused, isLoaded]);
 
   const initGame = () => {
     setSelectedCell(null);
@@ -124,6 +130,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     setTimer(0);
     setIsRunning(true);
     setIsPaused(false);
+    setNotesGrid(Array(9).fill(null).map(() => Array(9).fill(null).map(() => [])))
+    setIsNotesMode(false)
     fillGridWithRandomNumbers(difficulty);
   };
 
@@ -153,7 +161,9 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
 
   // Function to toggle the selected cell
   const handleCellClick = (row, col) => {
-    if (initialGrid[row][col]) return;
+    if (initialGrid[row][col] || correctCells.some(cell => cell.row === row && cell.col === col)) {
+      return;
+    }
 
     if (selectedCell && selectedCell.row === row && selectedCell.col === col) {
       setSelectedCell(null); // Deselect
@@ -167,12 +177,18 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   // Function to handle the number click from CatsRow
   const handleNumberClick = (number) => {
     if (selectedCell) {
+      const { row, col } = selectedCell;
       const newGrid = [...grid];
+      const newNotesGrid = [...notesGrid];
+
       if (isNotesMode) {
         // Store the number as a note (a visual draft)
-        newGrid[selectedCell.row][selectedCell.col] = number;
-
-        // Remove the cell from mistakenCells if a note is added
+        const notes = newNotesGrid[row][col];
+        if (notes.includes(number)) {
+          newNotesGrid[row][col] = notes.filter((n) => n !== number);
+        } else {
+          newNotesGrid[row][col] = [...notes, number];
+        }
         setMistakenCells((prev) =>
           prev.filter(
             (cell) =>
@@ -181,9 +197,11 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         );
       } else {
         // Normal mode: handle mistakes and correct answers
+        newNotesGrid[row][col] = [];
         newGrid[selectedCell.row][selectedCell.col] = number;
         checkUserSelection(selectedCell.row, selectedCell.col, number);
       }
+      setNotesGrid(newNotesGrid);
       setGrid(newGrid);
       setSelectedCell(null);
       setIsSelected(false);
@@ -463,6 +481,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
             />
             <Grid
               grid={grid}
+              notesGrid={notesGrid}
               initialGrid={initialGrid}
               selectedCell={selectedCell}
               mistakenCells={mistakenCells}
