@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Game from './pages/Game';
 import MainMenuPage from './pages/MainMenuPage';
 import houseLogo from './assets/house.svg'
+import { Storage } from '@capacitor/storage';
 
 function App() {
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -10,11 +11,15 @@ function App() {
   const [difficulty, setDifficulty] = useState("medium");
 
   useEffect(() => {
-    const savedGame = localStorage.getItem('savedGame');
-    if (savedGame) {
-      setIsResuming(true);
-    }
+    const checkSavedGame = async () => {
+      const savedGame = await Storage.get({ key: 'grid' });
+      if (savedGame.value) {
+        setIsResuming(true);
+      }
+    };
+    checkSavedGame();
   }, []);
+  
 
   const handleStartGame = (selectedMistakesAllowed, selectedDifficulty) => {
     setMistakesAllowed(selectedMistakesAllowed);

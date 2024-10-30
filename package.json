@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/ios": "^6.1.2",
+    "@capacitor/storage": "^1.2.5",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.1.5",
     "@testing-library/jest-dom": "^5.17.0",

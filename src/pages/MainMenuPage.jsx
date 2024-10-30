@@ -1,13 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import logo from "../assets/Catdoku-logo.png"
+import { Storage } from '@capacitor/storage';
 
 const MainMenuPage = ({ onStartGame, onResumeGame }) => {
   const [mistakesAllowed, setMistakesAllowed] = useState(3);
   const [difficulty, setDifficulty] = useState("Medium");
-  const savedGame = localStorage.getItem('savedGame');
+  const [hasSavedGame, setHasSavedGame] = useState(false);
   const [isDifficultyOpen, setIsDifficultyOpen] = useState(false);
   const [isMistakesOpen, setIsMistakesOpen] = useState(false);
+
+  useEffect(() => {
+    const checkSavedGame = async () => {
+      const savedGame = await Storage.get({ key: 'grid' });
+      setHasSavedGame(savedGame.value !== null);
+    };
+    checkSavedGame();
+  }, []);
 
   const handleMistakesSelect = (value) => {
     setMistakesAllowed(value);
@@ -25,13 +34,13 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex flex-col items-center mt-10">
+      <div className="flex flex-col items-center mt-20">
         <img src={logo} alt="logo" className="w-56 aspect-square shadow-md" />
         <h1 className="text-4xl font-bold text-center mt-1">CatDoku</h1>
       </div>
 
 
-      <div className="flex-grow flex flex-col items-center justify-center space-y-5 mb-28">
+      <div className="flex-grow flex flex-col items-center justify-center space-y-5 mb-48">
         <div className="flex items-center space-x-2">
           <label className="text-md font-semibold">Mistakes :</label>
           <div className="relative inline-block text-left">
@@ -103,7 +112,7 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
           Start New Game
         </button>
 
-        {savedGame && (
+        {hasSavedGame && (
           <button
             className="bg-orange-600 text-white px-4 py-2 rounded-lg text-lg font-semibold"
             onClick={onResumeGame}

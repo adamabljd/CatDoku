@@ -21,3 +21,18 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Ignore Android Studio and iOS Xcode settings and build artifacts
+android/app/build/
+android/.gradle/
+android/capacitor.settings.gradle
+android/local.properties
+ios/App/App.xcworkspace/
+ios/App/Pods/
+ios/App/Podfile.lock
+ios/Pods/
+ios/build/
+
+# Ignore generated build output
+build/
+dist/
