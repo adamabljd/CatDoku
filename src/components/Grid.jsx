@@ -1,7 +1,7 @@
 import React from "react";
 import SubGrid from "./SubGrid";
 
-const Grid = ({ grid, initialGrid, selectedCell, onCellClick, mistakenCells, correctCells, isPaused, notesGrid }) => {
+const Grid = ({ grid, initialGrid, selectedCell, onCellClick, mistakenCells, correctCells, isPaused, notesGrid, highlightedNumber }) => {
   // Divide the grid into 3x3 subgrids
   const subGrids = [];
 
@@ -39,6 +39,7 @@ const Grid = ({ grid, initialGrid, selectedCell, onCellClick, mistakenCells, cor
             correctCells={correctCells}
             isPaused={isPaused}
             notesGrid={notesGrid}
+            highlightedNumber={highlightedNumber}
           />
         </div>
       ))}

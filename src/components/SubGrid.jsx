@@ -9,7 +9,7 @@ import cat7 from "../assets/cats/Catdoku 7.png"
 import cat8 from "../assets/cats/Catdoku 8.png"
 import cat9 from "../assets/cats/Catdoku 9.png"
 
-const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCells, isPaused, notesGrid }) => {
+const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCells, isPaused, notesGrid, highlightedNumber }) => {
   const catImages = [null, cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
 
   return (
@@ -27,6 +27,8 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
         const isMistakenCell = mistakenCells.some((mistake) => mistake.row === row && mistake.col === col);
         const isCorrectCell = correctCells.some((cell) => cell.row === row && cell.col === col);
 
+        const isHighlightedNumber = highlightedNumber !== null && number === highlightedNumber;
+
         return (
           <div
             key={index}
@@ -37,6 +39,7 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
               ${isHighlighted ? "bg-yellow-200" : ""}
               ${isLocked ? "bg-gray-200" : ""}
               ${!isPaused && !isLocked && !isCorrectCell ? "hover:cursor-pointer" : ""} 
+              ${isHighlightedNumber ? "bg-purple-300" : ""}
               ${isPaused ? "bg-white" : ""}
               `}
             onClick={() => !isLocked && onCellClick(row, col)}
@@ -44,9 +47,9 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
             {isPaused ? (
               ""
             ) : notesGrid[row][col].length ? (
-              <div className="grid grid-cols-3 gap-1 w-full h-full">
+              <div className="grid grid-cols-3 w-full h-full">
                 {notesGrid[row][col].map((note, i) => (
-                  <img key={i} src={catImages[note]} alt={`Cat note ${note}`} className="w-4 h-4" />
+                  <img key={i} src={catImages[note]} alt={`Cat note ${note}`} className="w-fit h-fit aspect-square" />
                 ))}
               </div>
             ) : (

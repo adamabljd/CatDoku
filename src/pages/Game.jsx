@@ -25,7 +25,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   const [isNotesMode, setIsNotesMode] = useState(false);
   const [maxMistakes, setMaxMistakes] = useState(mistakesAllowed)
   const [notesGrid, setNotesGrid] = useState(Array(9).fill(null).map(() => Array(9).fill(null).map(() => [])));
-
+  const [highlightedNumber, setHighlightedNumber] = useState(null);
 
   const loadSavedState = async (key, defaultValue) => {
     const savedState = isResuming ? await Storage.get({ key }) : null;
@@ -132,6 +132,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     setIsPaused(false);
     setNotesGrid(Array(9).fill(null).map(() => Array(9).fill(null).map(() => [])))
     setIsNotesMode(false)
+    setHighlightedNumber(null)
     fillGridWithRandomNumbers(difficulty);
   };
 
@@ -208,6 +209,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
       if (!isNotesMode) {
         checkIfGameWon(newGrid);
       }
+    } else {
+      setHighlightedNumber(number)
     }
   };
 
@@ -451,6 +454,20 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     }
   };
 
+  // Global click listener to reset highlightedNumber
+  useEffect(() => {
+    const handleGlobalClick = (event) => {
+      const isClickInsideCatsRow = event.target.closest('.cats-row');
+      if (!isClickInsideCatsRow) {
+        setHighlightedNumber(null); // Reset only if clicking outside CatsRow
+      }
+    };
+
+    document.addEventListener("click", handleGlobalClick);
+    return () => document.removeEventListener("click", handleGlobalClick);
+  }, []);
+
+
   if (!isLoaded) {
     return <div>Loading game data...</div>;
   }
@@ -488,6 +505,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
               correctCells={correctCells}
               onCellClick={handleCellClick}
               isPaused={isPaused}
+              highlightedNumber={highlightedNumber}
             />
             <CatsRow
               onNumberClick={handleNumberClick}

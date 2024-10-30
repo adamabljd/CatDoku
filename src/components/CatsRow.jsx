@@ -14,13 +14,18 @@ import penLogo from "../assets/pen.svg"
 const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused }) => {
   const cats = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
 
+  const handleCatClick = (event, index) => {
+    event.stopPropagation(); // Stop event propagation
+    onNumberClick(index + 1);
+  };
+
   return (
     <div className="flex flex-col space-y-2">
       <div className={`flex flex-row justify-between px-2 sm:px-0`}>
         {cats.map((cat, index) => (
           <div
             key={index}
-            onClick={() => onNumberClick(index + 1)}
+            onClick={(event) => handleCatClick(event, index)}
             className={`number font-bold cat`}
             disabled={!isSelected}
           >
