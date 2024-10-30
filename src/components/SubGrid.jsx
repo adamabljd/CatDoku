@@ -37,11 +37,12 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
               ${isHighlighted ? "bg-yellow-200" : ""}
               ${isLocked ? "bg-gray-200" : ""}
               ${!isPaused && !isLocked ? "hover:cursor-pointer" : ""} 
-              ${isPaused ? "bg-white" : ""}`}
+              ${isPaused ? "bg-white" : ""}
+              `}
             onClick={() => !isLocked && onCellClick(row, col)}
           >
             {isPaused ? "" : number !== null && number >= 1 && number <= 9 ? (
-              <img src={catImages[number]} alt={`Cat ${number}`} className="w-full h-full" />
+              <img src={catImages[number]} alt={`Cat ${number}`} className={`${!isMistakenCell && !isCorrectCell && !isLocked ? "w-7 h-7" : "w-full h-full"}`} />
             ) : ""}
           </div>
         );
