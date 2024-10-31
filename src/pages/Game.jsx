@@ -509,17 +509,19 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
               onRestart={initGame}
               mistakesAllowed={maxMistakes}
             />
-            <Grid
-              grid={grid}
-              notesGrid={notesGrid}
-              initialGrid={initialGrid}
-              selectedCell={selectedCell}
-              mistakenCells={mistakenCells}
-              correctCells={correctCells}
-              onCellClick={handleCellClick}
-              isPaused={isPaused}
-              highlightedNumber={highlightedNumber}
-            />
+            <div className="flex items-center justify-center">
+              <Grid
+                grid={grid}
+                notesGrid={notesGrid}
+                initialGrid={initialGrid}
+                selectedCell={selectedCell}
+                mistakenCells={mistakenCells}
+                correctCells={correctCells}
+                onCellClick={handleCellClick}
+                isPaused={isPaused}
+                highlightedNumber={highlightedNumber}
+              />
+            </div>
             <CatsRow
               onNumberClick={handleNumberClick}
               isSelected={isSelected}
