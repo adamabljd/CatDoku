@@ -112,7 +112,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         await Storage.set({ key: 'correctCells', value: JSON.stringify(correctCells) });
         await Storage.set({ key: 'isRunning', value: JSON.stringify(isRunning) });
         await Storage.set({ key: 'isPaused', value: JSON.stringify(isPaused) });
-        await Storage.set( { key: 'notesGrid', value: JSON.stringify(notesGrid) })
+        await Storage.set({ key: 'notesGrid', value: JSON.stringify(notesGrid) })
       };
       saveGameState();
     }
@@ -244,7 +244,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   };
 
   // Function to check if the entire grid is correctly filled
-  const checkIfGameWon = (grid) => {
+  const checkIfGameWon = async (grid) => {
     // Check if any cells contain a note (not fully completed)
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
@@ -292,6 +292,19 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
 
     // If all checks pass, set game won to true
     setGameWon(true);
+    await checkAndSetBestTime();
+  };
+
+  // Function to check and update best time for the current difficulty and max mistakes setting
+  const checkAndSetBestTime = async () => {
+    const key = `bestTime_${difficulty}_${maxMistakes}`;
+    const bestTimeData = await Storage.get({ key });
+    const bestTime = bestTimeData.value ? JSON.parse(bestTimeData.value) : Infinity;
+
+    if (timer < bestTime) {
+      await Storage.set({ key, value: JSON.stringify(timer) });
+      console.log(`New best time for ${difficulty} with ${maxMistakes} mistakes: ${formatTime(timer)}`);
+    }
   };
 
   //------------------------------ GAME'S CORE MECANICS ----------------------------------------------
