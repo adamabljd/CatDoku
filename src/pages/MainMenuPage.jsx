@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import logo from "../assets/Catdoku-logo.png"
+import logo from "../assets/Catdoku-logo_rounded.png"
+import chartBar from "../assets/chart_bar.svg"
 import { Storage } from '@capacitor/storage';
+import { useNavigate } from "react-router-dom";
 
 const MainMenuPage = ({ onStartGame, onResumeGame }) => {
   const [mistakesAllowed, setMistakesAllowed] = useState(3);
@@ -9,6 +11,8 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
   const [hasSavedGame, setHasSavedGame] = useState(false);
   const [isDifficultyOpen, setIsDifficultyOpen] = useState(false);
   const [isMistakesOpen, setIsMistakesOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkSavedGame = async () => {
@@ -30,6 +34,10 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
 
   const handleStartGame = () => {
     onStartGame(mistakesAllowed, difficulty);
+  };
+
+  const handleViewBestTimes = () => {
+    navigate("/best-times");
   };
 
   return (
@@ -120,6 +128,13 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
             Resume Last Game
           </button>
         )}
+
+        <button
+          onClick={handleViewBestTimes}
+          className="bg-blue-600 text-white rounded-md shadow-md w-fit p-2 mt-4"
+        >
+          <img src={chartBar} alt="chartbar" className="w-7 h-7" />
+        </button>
       </div>
     </div>
   );
