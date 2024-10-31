@@ -66,7 +66,7 @@ const GameWrapper = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center">
+    <div className="min-h-screen max-h-screen min-w-screen max-w-screen flex flex-col justify-center items-center">
       <Game
         isResuming={isResuming}
         mistakesAllowed={mistakesAllowed}

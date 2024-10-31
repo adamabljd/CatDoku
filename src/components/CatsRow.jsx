@@ -29,7 +29,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
             className={`number font-bold cat`}
             disabled={!isSelected}
           >
-            <img src={cat} alt={`Cat ${index + 1}`} className="w-full h-full max-w-[2.3rem] max-h-[2.3rem] md:max-w-10 md:max-h-10 lg:max-w-11 lg:max-h-11 xl:max-w-14 xl:max-h-14 aspect-square" />
+            <img src={cat} alt={`Cat ${index + 1}`} className="w-full h-full max-w-11 max-h-11 lg:max-w-12 lg:max-h-12 xl:max-w-14 xl:max-h-14 aspect-square" />
           </div>
         ))}
 
