@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">CatDoku!</string>
-    <string name="title_activity_main">CatDoku!</string>
+    <string name="app_name">MeowDoku!</string>
+    <string name="title_activity_main">MeowDoku!</string>
     <string name="package_name">com.SqueakyGames.catdoku</string>
     <string name="custom_url_scheme">com.SqueakyGames.catdoku</string>
 </resources>

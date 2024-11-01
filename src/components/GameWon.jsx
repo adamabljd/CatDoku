@@ -20,7 +20,7 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins 
     };
 
     return (
-        <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-80 bg-black z-50">
+        <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-60 bg-black z-50">
             {showConfetti && (
                 <Confetti width={width} height={height} recycle={true} numberOfPieces={500} />
             )}

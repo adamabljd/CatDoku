@@ -6,6 +6,7 @@ import GameBar from "../components/GameBar";
 import { Storage } from '@capacitor/storage';
 import { useNavigate } from "react-router-dom";
 import GameWon from "../components/GameWon";
+import GameLost from "../components/GameLost";
 
 const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   const navigate = useNavigate();
@@ -524,9 +525,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     <div className="space-y-5 mt-5">
       {/* Render based on explicit checks */}
       {isLoaded && gameOver && !gameWon ? (
-        <div className="text-3xl font-bold px-2 text-red-600">
-          Game Over! You've made {maxMistakes} mistake(s).
-        </div>
+        <GameLost mistakes={mistakes} />
       ) : isLoaded && gameWon && !gameOver ? (
         <GameWon bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} />
 
@@ -562,6 +561,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
               isNotesMode={isNotesMode}
               toggleNotesMode={toggleNotesMode}
             />
+
             <div className="flex items-center justify-center mt-4 mb-5">
               <button
                 className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
