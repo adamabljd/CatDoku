@@ -41,14 +41,13 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen max-h-screen flex flex-col">
       <div className="flex flex-col items-center mt-20">
-        <img src={logo} alt="logo" className="w-56 aspect-square shadow-md" />
+        <img src={logo} alt="logo" className="w-56 aspect-square" />
         <h1 className="text-4xl font-bold text-center mt-1">CatDoku</h1>
       </div>
 
-
-      <div className="flex-grow flex flex-col items-center justify-center space-y-5 mb-48">
+      <div className="flex-grow flex flex-col items-center justify-center space-y-4 mb-40">
         <div className="flex items-center space-x-2">
           <label className="text-md font-semibold">Mistakes :</label>
           <div className="relative inline-block text-left">

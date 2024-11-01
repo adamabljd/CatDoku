@@ -1,44 +1,50 @@
+// BestTimesPage.js
 import React, { useState, useEffect } from 'react';
 import { Storage } from '@capacitor/storage';
 import { useNavigate } from 'react-router-dom';
 import houseLogo from '../assets/house.svg';
-
+import LeaderboardTable from '../components/LeaderboardTable';
 
 const difficulties = ["Easy", "Medium", "Hard"];
 const mistakesOptions = [1, 2, 3, 4, 5, Infinity];
 
 const BestTimesPage = () => {
   const [bestTimes, setBestTimes] = useState({});
-
+  const [wins, setWins] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadBestTimes = async () => {
+    const loadLeaderboardData = async () => {
       const times = {};
+      const winCounts = {};
 
-      // Loop through each difficulty and maxMistakes option
       for (let difficulty of difficulties) {
         times[difficulty] = {};
+        winCounts[difficulty] = {};
         for (let mistakes of mistakesOptions) {
-          const key = `bestTime_${difficulty}_${mistakes}`;
-          const result = await Storage.get({ key });
-          const time = result.value ? JSON.parse(result.value) : null;
-          times[difficulty][mistakes] = time;
+          const timeKey = `bestTime_${difficulty}_${mistakes}`;
+          const winKey = `winCount_${difficulty}_${mistakes}`;
+
+          const timeResult = await Storage.get({ key: timeKey });
+          const winResult = await Storage.get({ key: winKey });
+
+          times[difficulty][mistakes] = timeResult.value ? JSON.parse(timeResult.value) : null;
+          winCounts[difficulty][mistakes] = winResult.value ? JSON.parse(winResult.value) : null;
         }
       }
+
       setBestTimes(times);
+      setWins(winCounts);
     };
 
-    loadBestTimes();
+    loadLeaderboardData();
   }, []);
 
   const formatTime = (time) => {
     if (!time) return "-";
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds
-      .toString()
-      .padStart(2, '0')}`;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const handleBackToMenu = () => {
@@ -47,38 +53,35 @@ const BestTimesPage = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen">
-      <h2 className="text-2xl font-bold mb-4">Best Times Leaderboard</h2>
-      <table className="border-collapse border border-gray-500">
-        <thead>
-          <tr>
-            <th className="border border-gray-500 p-2">Difficulty</th>
-            {mistakesOptions.map((mistakes) => (
-              <th key={mistakes} className="border border-gray-500 p-2 w-5">
-                {mistakes === Infinity ? "Unlimited" : mistakes} Mistakes
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {difficulties.map((difficulty) => (
-            <tr key={difficulty}>
-              <td className="border border-gray-500 p-2 font-semibold">{difficulty}</td>
-              {mistakesOptions.map((mistakes) => (
-                <td key={mistakes} className="border border-gray-500 p-2">
-                  {formatTime(bestTimes[difficulty]?.[mistakes])}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      
-      <button
-        className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2 mt-4"
-        onClick={handleBackToMenu}
-      >
-        <img src={houseLogo} alt="house" className="h-7 w-7" />
-      </button>
+      <h2 className="text-2xl font-bold mb-3 mt-10">Leaderboard</h2>
+
+      <div className='flex-grow w-full overflow-y-auto px-2 max-h-[80vh] space-y-2 pb-3'>
+        {/* Best Time Table */}
+        <LeaderboardTable
+          title="Best Time"
+          data={bestTimes}
+          difficulties={difficulties}
+          mistakesOptions={mistakesOptions}
+          formatTime={formatTime}
+        />
+
+        {/* Wins Table */}
+        <LeaderboardTable
+          title="Wins"
+          data={wins}
+          difficulties={difficulties}
+          mistakesOptions={mistakesOptions}
+        />
+      </div>
+
+      <div className="w-full flex justify-center mb-2 mt-4">
+        <button
+          className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
+          onClick={handleBackToMenu}
+        >
+          <img src={houseLogo} alt="house" className="h-7 w-7" />
+        </button>
+      </div>
     </div>
   );
 };

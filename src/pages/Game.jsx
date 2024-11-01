@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Grid from "../components/Grid";
 import CatsRow from "../components/CatsRow";
+import houseLogo from '../assets/house.svg';
 import GameBar from "../components/GameBar";
 import { Storage } from '@capacitor/storage';
+import { useNavigate } from "react-router-dom";
+import GameWon from "../components/GameWon";
 
 const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
+  const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [difficulty, setDifficulty] = useState(initialDifficulty);
@@ -26,6 +30,19 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   const [maxMistakes, setMaxMistakes] = useState(mistakesAllowed)
   const [notesGrid, setNotesGrid] = useState(Array(9).fill(null).map(() => Array(9).fill(null).map(() => [])));
   const [highlightedNumber, setHighlightedNumber] = useState(null);
+  const [bestTime, setBestTime] = useState(null);
+  const [totalWins, setTotalWins] = useState(0);
+
+  const loadStats = async () => {
+    const bestTimeKey = `bestTime_${difficulty}_${maxMistakes}`;
+    const totalWinsKey = `winCount_${difficulty}_${maxMistakes}`;
+
+    const bestTimeData = await Storage.get({ key: bestTimeKey });
+    const totalWinsData = await Storage.get({ key: totalWinsKey });
+
+    setBestTime(bestTimeData.value ? JSON.parse(bestTimeData.value) : null);
+    setTotalWins(totalWinsData.value ? JSON.parse(totalWinsData.value) : 0);
+  };
 
   const loadSavedState = async (key, defaultValue) => {
     const savedState = isResuming ? await Storage.get({ key }) : null;
@@ -93,6 +110,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
       setIsLoaded(true);
     };
     loadGame();
+    loadStats();
   }, [isResuming]);
 
   // Save game state in individual keys
@@ -293,6 +311,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     // If all checks pass, set game won to true
     setGameWon(true);
     await checkAndSetBestTime();
+    await incrementWinCount();
+    loadStats();
   };
 
   // Function to check and update best time for the current difficulty and max mistakes setting
@@ -303,9 +323,20 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
 
     if (timer < bestTime) {
       await Storage.set({ key, value: JSON.stringify(timer) });
-      console.log(`New best time for ${difficulty} with ${maxMistakes} mistakes: ${formatTime(timer)}`);
+      setBestTime(timer)
     }
   };
+
+  // Function to increment win count in storage
+  const incrementWinCount = async () => {
+    const key = `winCount_${difficulty}_${maxMistakes}`;
+    const winData = await Storage.get({ key });
+    const winCount = winData.value ? JSON.parse(winData.value) : 0;
+
+    setTotalWins(winCount + 1)
+    await Storage.set({ key, value: JSON.stringify(winCount + 1) });
+  };
+
 
   //------------------------------ GAME'S CORE MECANICS ----------------------------------------------
   // Function to check if a number can be placed in a cell
@@ -480,24 +511,26 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     return () => document.removeEventListener("click", handleGlobalClick);
   }, []);
 
+  const handleReturnToMenu = () => {
+    navigate("/");
+  };
+
 
   if (!isLoaded) {
     return <div>Loading game data...</div>;
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 mt-5">
       {/* Render based on explicit checks */}
       {isLoaded && gameOver && !gameWon ? (
         <div className="text-3xl font-bold px-2 text-red-600">
           Game Over! You've made {maxMistakes} mistake(s).
         </div>
       ) : isLoaded && gameWon && !gameOver ? (
-        <div className="text-3xl font-bold px-2 text-green-600">
-          Congratulations, You Won!
-        </div>
+        <GameWon bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} />
+
       ) : (
-        // Render the game interface only when neither gameWon nor gameOver is true
         (
           <>
             <GameBar
@@ -529,6 +562,14 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
               isNotesMode={isNotesMode}
               toggleNotesMode={toggleNotesMode}
             />
+            <div className="flex items-center justify-center mt-4 mb-5">
+              <button
+                className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
+                onClick={handleReturnToMenu}
+              >
+                <img src={houseLogo} alt="house" className="h-7 w-7" />
+              </button>
+            </div>
           </>
         )
       )}

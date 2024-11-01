@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useSearchParams } from 'react-router-dom';
 import Game from './pages/Game';
 import MainMenuPage from './pages/MainMenuPage';
-import BestTimesPage from './pages/BestTimesPage'; // Import leaderboard if created
-import houseLogo from './assets/house.svg';
+import BestTimesPage from './pages/BestTimesPage';
 import { Storage } from '@capacitor/storage';
 
 function App() {
@@ -49,36 +48,26 @@ const MainMenuWrapper = () => {
 };
 
 const GameWrapper = () => {
-  const navigate = useNavigate();
-  const [mistakesAllowed, setMistakesAllowed] = useState(3);
-  const [difficulty, setDifficulty] = useState("medium");
-  const [isResuming, setIsResuming] = useState(false);
+  
+  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setMistakesAllowed(parseInt(params.get("mistakesAllowed")) || 3);
-    setDifficulty(params.get("difficulty") || "medium");
-    setIsResuming(params.get("isResuming") === "true");
-  }, []);
+  // Get values directly from URL params
+  const mistakesAllowedParam = searchParams.get("mistakesAllowed");
+  const mistakesAllowed = mistakesAllowedParam === "Infinity" || mistakesAllowedParam === "Unlimited"
+    ? Infinity
+    : parseInt(mistakesAllowedParam) || 3;
+  const difficulty = searchParams.get("difficulty") || "Medium";
+  const isResuming = searchParams.get("isResuming") === "true";
 
-  const handleReturnToMenu = () => {
-    navigate("/");
-  };
+  
 
   return (
-    <div className="min-h-screen max-h-screen min-w-screen max-w-screen flex flex-col justify-center items-center">
+    <div className="min-h-screen flex flex-col justify-center items-center">
       <Game
         isResuming={isResuming}
         mistakesAllowed={mistakesAllowed}
         initialDifficulty={difficulty}
-        onReturnToMenu={handleReturnToMenu}
       />
-      <button
-        className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2 mt-4"
-        onClick={handleReturnToMenu}
-      >
-        <img src={houseLogo} alt="house" className="h-7 w-7" />
-      </button>
     </div>
   );
 };
