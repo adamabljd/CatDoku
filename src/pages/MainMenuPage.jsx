@@ -42,12 +42,12 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col items-center mt-20">
+      <div className="flex flex-col items-center mt-20 mb-10 landscape:mt-10">
         <img src={logo} alt="logo" className="w-56 aspect-square" />
-        <h1 className="text-4xl font-bold text-center mt-1">MeowDoku!</h1>
+        <h1 className="text-4xl font-bold text-center mt-3">MiawDoku!</h1>
       </div>
 
-      <div className="flex-grow flex flex-col items-center justify-center space-y-4 mb-40">
+      <div className="flex-grow flex flex-col items-center justify-center space-y-4 mb-10">
         <div className="flex items-center space-x-2">
           <label className="text-md font-semibold">Mistakes :</label>
           <div className="relative inline-block text-left">

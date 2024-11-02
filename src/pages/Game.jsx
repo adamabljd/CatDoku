@@ -549,7 +549,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   }
 
   return (
-    <div className="space-y-5 mt-5">
+    <div className="space-y-5 mt-5 landscape:mb-10">
       {/* Render based on explicit checks */}
       {isLoaded && gameOver && !gameWon ? (
         <GameLost mistakes={mistakes} />
