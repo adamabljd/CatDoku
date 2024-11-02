@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Storage } from '@capacitor/storage';
 import cat1 from "../assets/cats/Catdoku 1.png"
 import cat2 from "../assets/cats/Catdoku 2.png"
 import cat3 from "../assets/cats/Catdoku 3.png"
@@ -10,14 +11,22 @@ import cat8 from "../assets/cats/Catdoku 8.png"
 import cat9 from "../assets/cats/Catdoku 9.png"
 import backspace from "../assets/backspace.svg"
 import penLogo from "../assets/pen.svg"
+import hintLogo from "../assets/lightbulb.svg"
+import videoLogo from "../assets/video.svg"
 
-const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused }) => {
+const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed }) => {
   const cats = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
 
   const handleCatClick = (event, index) => {
-    event.stopPropagation(); // Stop event propagation
+    event.stopPropagation();
     onNumberClick(index + 1);
   };
+
+  const handleHintClick = () => {
+    setFreeHintUsed(true);
+    revealNumber();
+  };
+
 
   return (
     <div className="flex flex-col space-y-2">
@@ -37,8 +46,9 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
 
       <div className="flex justify-center items-center space-x-5">
         <button
-          className={`p-1 rounded shadow ${isNotesMode ? 'bg-yellow-500 text-white' : 'bg-slate-300 text-black'}`}
+          className={`p-1 rounded shadow ${isNotesMode ? 'bg-green-500 text-white' : 'bg-slate-300 text-black'}`}
           onClick={toggleNotesMode}
+          disabled={isPaused}
         >
           {isNotesMode ? <img src={penLogo} alt={"pen"} className="h-10 w-10" /> : <img src={penLogo} alt={"pen"} className="h-7 w-7" />}
         </button>
@@ -46,10 +56,30 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
         <button
           className={`bg-red-300 p-1 shadow-md text-xs rounded`}
           onClick={onEraseClick}
-          disabled={!isSelected}
+          disabled={!isSelected || isPaused}
         >
           <img src={backspace} alt="backspace" className="h-7 w-7" />
         </button>
+
+        <div className="relative">
+          <button
+            className="bg-yellow-400 text-white p-1 shadow-md rounded relative"
+            onClick={handleHintClick}
+            disabled={isPaused}
+          >
+            <img src={hintLogo} alt="hint" className="h-7 w-7" />
+          </button>
+          <div className="absolute top-[-0.4rem] right-[-0.4rem] h-4 w-4 z-10"
+          >
+            {!freeHintUsed ?
+              "1" :
+              <img
+                src={freeHintUsed ? videoLogo : "1"}
+                alt="video hint"
+              />
+            }
+          </div>
+        </div>
       </div>
     </div>
   );

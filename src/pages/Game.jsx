@@ -33,6 +33,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   const [highlightedNumber, setHighlightedNumber] = useState(null);
   const [bestTime, setBestTime] = useState(null);
   const [totalWins, setTotalWins] = useState(0);
+  const [freeHintUsed, setFreeHintUsed] = useState(false);
 
   const loadStats = async () => {
     const bestTimeKey = `bestTime_${difficulty}_${maxMistakes}`;
@@ -69,9 +70,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
           loadedTimer,
           loadedMistakenCells,
           loadedCorrectCells,
-          loadedIsRunning,
-          loadedIsPaused,
-          loadedNotesGrid
+          loadedNotesGrid,
+          loadedFreeHintUsed
         ] = await Promise.all([
           loadSavedState("difficulty", initialDifficulty),
           loadSavedState("maxMistakes", maxMistakes),
@@ -84,9 +84,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
           loadSavedState("timer", 0),
           loadSavedState("mistakenCells", []),
           loadSavedState("correctCells", []),
-          loadSavedState("isRunning", true),
-          loadSavedState("isPaused", false),
           loadSavedState("notesGrid", Array(9).fill(null).map(() => Array(9).fill(null).map(() => []))),
+          loadSavedState("freeHintUsed", false)
         ]);
 
         // Set all states at once after loading
@@ -101,9 +100,10 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         setTimer(loadedTimer);
         setMistakenCells(loadedMistakenCells);
         setCorrectCells(loadedCorrectCells);
-        setIsRunning(loadedIsRunning);
-        setIsPaused(loadedIsPaused);
+        setIsRunning(true);
+        setIsPaused(false);
         setNotesGrid(loadedNotesGrid)
+        setFreeHintUsed(loadedFreeHintUsed);
       } else {
         initGame();
       }
@@ -129,13 +129,12 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         await Storage.set({ key: 'timer', value: JSON.stringify(timer) });
         await Storage.set({ key: 'mistakenCells', value: JSON.stringify(mistakenCells) });
         await Storage.set({ key: 'correctCells', value: JSON.stringify(correctCells) });
-        await Storage.set({ key: 'isRunning', value: JSON.stringify(isRunning) });
-        await Storage.set({ key: 'isPaused', value: JSON.stringify(isPaused) });
-        await Storage.set({ key: 'notesGrid', value: JSON.stringify(notesGrid) })
+        await Storage.set({ key: 'notesGrid', value: JSON.stringify(notesGrid) });
+        await Storage.set({ key: 'freeHintUsed', value: JSON.stringify(freeHintUsed) });
       };
       saveGameState();
     }
-  }, [grid, initialGrid, notesGrid, solutionGrid, selectedCell, selectedNumber, isSelected, difficulty, maxMistakes, gameWon, mistakes, gameOver, timer, mistakenCells, correctCells, isRunning, isPaused, isLoaded]);
+  }, [grid, initialGrid, notesGrid, solutionGrid, selectedCell, selectedNumber, isSelected, difficulty, maxMistakes, gameWon, mistakes, gameOver, timer, mistakenCells, correctCells, isLoaded, freeHintUsed]);
 
   const initGame = () => {
     setSelectedCell(null);
@@ -152,7 +151,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     setNotesGrid(Array(9).fill(null).map(() => Array(9).fill(null).map(() => [])))
     setIsNotesMode(false)
     setHighlightedNumber(null)
-    fillGridWithRandomNumbers(difficulty);
+    setFreeHintUsed(false)
+    fillGridWithRandomNumbers(difficulty)
   };
 
   // Function to start the timer
@@ -499,6 +499,33 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     }
   };
 
+  const revealNumber = () => {
+    const emptyCells = [];
+
+    // Collect all empty cells
+    grid.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        if (cell === null) {
+          emptyCells.push({ row: rowIndex, col: colIndex });
+        }
+      });
+    });
+
+    // Choose a random empty cell if there are any
+    if (emptyCells.length > 0) {
+      const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      const { row, col } = randomCell;
+      const correctNumber = solutionGrid[row][col]; // Get the correct number from solutionGrid
+
+      const newGrid = [...grid];
+      newGrid[row][col] = correctNumber;
+
+      setGrid(newGrid);
+      setCorrectCells([...correctCells, { row, col }]);
+      checkIfGameWon(newGrid)
+    }
+  };
+
   // Global click listener to reset highlightedNumber
   useEffect(() => {
     const handleGlobalClick = (event) => {
@@ -560,6 +587,9 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
               onEraseClick={handleEraseClick}
               isNotesMode={isNotesMode}
               toggleNotesMode={toggleNotesMode}
+              revealNumber={revealNumber}
+              freeHintUsed={freeHintUsed}
+              setFreeHintUsed={setFreeHintUsed}
             />
 
             <div className="flex items-center justify-center mt-4 mb-5">
