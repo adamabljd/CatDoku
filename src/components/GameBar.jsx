@@ -1,7 +1,7 @@
 import React from "react";
-import pauseIcon from "../assets/pause.svg"
-import playIcon from "../assets/play.svg"
-import restartIcon from "../assets/restart.svg"
+import pauseIcon from "../assets/icons/pause.svg"
+import playIcon from "../assets/icons/play.svg"
+import restartIcon from "../assets/icons/restart.svg"
 import deadCatIcon from "../assets/cats/deadcat.png"
 
 const GameBar = ({ difficulty, mistakes, timer, isPaused, onPauseToggle, onRestart, mistakesAllowed }) => {

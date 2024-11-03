@@ -4,6 +4,7 @@ import Game from './pages/Game';
 import MainMenuPage from './pages/MainMenuPage';
 import BestTimesPage from './pages/BestTimesPage';
 import { Storage } from '@capacitor/storage';
+import HowToPlayPage from './pages/HowToPlayPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<MainMenuWrapper />} />
           <Route path="/game" element={<GameWrapper />} />
           <Route path="/best-times" element={<BestTimesPage />} />
+          <Route path="/how-to-play" element={<HowToPlayPage />} />
         </Routes>
       </div>
     </Router>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Storage } from '@capacitor/storage';
 import { useNavigate } from 'react-router-dom';
-import houseLogo from '../assets/house.svg';
+import houseLogo from '../assets/icons/house.svg';
 import LeaderboardTable from '../components/LeaderboardTable';
 
 const difficulties = ["Easy", "Medium", "Hard"];

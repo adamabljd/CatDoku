@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import houseLogo from '../assets/house.svg';
-import videoLogo from '../assets/video.svg';
+import houseLogo from '../assets/icons/house.svg';
+import videoLogo from '../assets/icons/video.svg';
 
 const GameLost = ({ mistakes }) => {
     const navigate = useNavigate();

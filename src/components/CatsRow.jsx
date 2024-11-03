@@ -9,10 +9,10 @@ import cat6 from "../assets/cats/Catdoku 6.png"
 import cat7 from "../assets/cats/Catdoku 7.png"
 import cat8 from "../assets/cats/Catdoku 8.png"
 import cat9 from "../assets/cats/Catdoku 9.png"
-import backspace from "../assets/backspace.svg"
-import penLogo from "../assets/pen.svg"
-import hintLogo from "../assets/lightbulb.svg"
-import videoLogo from "../assets/video.svg"
+import backspace from "../assets/icons/backspace.svg"
+import penLogo from "../assets/icons/pen.svg"
+import hintLogo from "../assets/icons/lightbulb.svg"
+import videoLogo from "../assets/icons/video.svg"
 
 const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed }) => {
   const cats = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];

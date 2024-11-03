@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Grid from "../components/Grid";
 import CatsRow from "../components/CatsRow";
-import houseLogo from '../assets/house.svg';
+import houseLogo from '../assets/icons/house.svg';
 import GameBar from "../components/GameBar";
 import { Storage } from '@capacitor/storage';
 import { useNavigate } from "react-router-dom";

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import logo from "../assets/Catdoku-logo_rounded.png"
-import chartBar from "../assets/chart_bar.svg"
+import hat from '../assets/icons/academicHat.svg';
+import chartBar from "../assets/icons/chart_bar.svg"
 import { Storage } from '@capacitor/storage';
 import { useNavigate } from "react-router-dom";
 
@@ -38,6 +39,10 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
 
   const handleViewBestTimes = () => {
     navigate("/best-times");
+  };
+
+  const handleHowToPlay = () => {
+    navigate("/how-to-play");
   };
 
   return (
@@ -128,12 +133,21 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
           </button>
         )}
 
-        <button
-          onClick={handleViewBestTimes}
-          className="bg-violet-700 text-white rounded-md shadow-md w-fit p-2 mt-4"
-        >
-          <img src={chartBar} alt="chartbar" className="w-7 h-7" />
-        </button>
+        <div className="space-x-4">
+          <button
+            onClick={handleViewBestTimes}
+            className="bg-emerald-500 rounded-md shadow-md w-fit p-2"
+          >
+            <img src={chartBar} alt="chartbar" className="w-7 h-7" />
+          </button>
+
+          <button
+            onClick={handleHowToPlay}
+            className="bg-yellow-500 rounded-md shadow-md w-fit p-2"
+          >
+            <img src={hat} alt="chartbar" className="w-7 h-7" />
+          </button>
+        </div>
       </div>
     </div>
   );

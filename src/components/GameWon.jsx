@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 import { useNavigate } from 'react-router-dom';
 import { useWindowSize } from 'react-use';
-import houseLogo from '../assets/house.svg';
+import houseLogo from '../assets/icons/house.svg';
 
 const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins }) => {
     const navigate = useNavigate();
