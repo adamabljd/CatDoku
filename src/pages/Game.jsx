@@ -7,8 +7,18 @@ import { Storage } from '@capacitor/storage';
 import { useNavigate } from "react-router-dom";
 import GameWon from "../components/GameWon";
 import GameLost from "../components/GameLost";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
 const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
+  // Function to provide haptic feedback on mistake
+  const triggerHapticFeedback = async () => {
+    try {
+      await Haptics.impact({ style: ImpactStyle.Medium });
+    } catch (error) {
+      console.error("Haptic feedback error:", error);
+    }
+  };
+  
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -479,6 +489,8 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     setInitialGrid(newInitialGrid); // Tracks locked cells
   };
 
+
+
   const checkUserSelection = (row, col, selectedNumber) => {
     const correctNumber = solutionGrid[row][col];
 
@@ -488,6 +500,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         prev.filter((cell) => !(cell.row === row && cell.col === col))
       );
       setMistakenCells((prev) => [...prev, { row, col }]);
+      triggerHapticFeedback();
       if (mistakes + 1 >= maxMistakes) {
         setGameOver(true);
       }
