@@ -518,9 +518,12 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
       const correctNumber = solutionGrid[row][col]; // Get the correct number from solutionGrid
 
       const newGrid = [...grid];
+      const newNotesGrid = [...notesGrid];
       newGrid[row][col] = correctNumber;
+      newNotesGrid[row][col] = [];
 
       setGrid(newGrid);
+      setNotesGrid(newNotesGrid);
       setCorrectCells([...correctCells, { row, col }]);
       checkIfGameWon(newGrid)
     }

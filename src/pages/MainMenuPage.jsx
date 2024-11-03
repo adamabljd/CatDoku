@@ -43,7 +43,7 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
   return (
     <div className="flex flex-col">
       <div className="flex flex-col items-center mt-20 mb-10 landscape:mt-10">
-        <img src={logo} alt="logo" className="w-56 aspect-square" />
+        <img src={logo} alt="logo" className="w-56 aspect-square shadow rounded-[1.25rem]" />
         <h1 className="text-4xl font-bold text-center mt-3">MiawDoku!</h1>
       </div>
 
@@ -130,7 +130,7 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
 
         <button
           onClick={handleViewBestTimes}
-          className="bg-blue-600 text-white rounded-md shadow-md w-fit p-2 mt-4"
+          className="bg-violet-700 text-white rounded-md shadow-md w-fit p-2 mt-4"
         >
           <img src={chartBar} alt="chartbar" className="w-7 h-7" />
         </button>
