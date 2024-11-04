@@ -3,8 +3,9 @@ import pauseIcon from "../assets/icons/pause.svg"
 import playIcon from "../assets/icons/play.svg"
 import restartIcon from "../assets/icons/restart.svg"
 import deadCatIcon from "../assets/cats/deadcat.png"
+import SettingsDropdown from "../components/SettingsDropdown";
 
-const GameBar = ({ difficulty, mistakes, timer, isPaused, onPauseToggle, onRestart, mistakesAllowed }) => {
+const GameBar = ({ difficulty, mistakes, timer, isPaused, onPauseToggle, onRestart, mistakesAllowed, soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
 
     return (
         <div className="flex flex-row justify-between items-center px-1">
@@ -15,8 +16,16 @@ const GameBar = ({ difficulty, mistakes, timer, isPaused, onPauseToggle, onResta
                 {isPaused ? <img className="h-8 w-8" src={playIcon} alt="play" /> : <img className="h-7 w-7" src={pauseIcon} alt="pause" />}
             </button>
             <button onClick={onRestart}>
-                <img src={restartIcon} alt="restart" className="h-7 w-7"/>
+                <img src={restartIcon} alt="restart" className="h-7 w-7" />
             </button>
+            <div>
+                <SettingsDropdown
+                    soundEnabled={soundEnabled}
+                    setSoundEnabled={setSoundEnabled}
+                    vibrationEnabled={vibrationEnabled}
+                    setVibrationEnabled={setVibrationEnabled}
+                />
+            </div>
         </div>
     );
 };

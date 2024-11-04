@@ -5,15 +5,23 @@ import hat from '../assets/icons/academicHat.svg';
 import chartBar from "../assets/icons/chart_bar.svg"
 import { Storage } from '@capacitor/storage';
 import { useNavigate } from "react-router-dom";
+import SettingsDropdown from "../components/SettingsDropdown";
 
-const MainMenuPage = ({ onStartGame, onResumeGame }) => {
+const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
+  const navigate = useNavigate();
   const [mistakesAllowed, setMistakesAllowed] = useState(3);
   const [difficulty, setDifficulty] = useState("Medium");
   const [hasSavedGame, setHasSavedGame] = useState(false);
   const [isDifficultyOpen, setIsDifficultyOpen] = useState(false);
   const [isMistakesOpen, setIsMistakesOpen] = useState(false);
 
-  const navigate = useNavigate();
+  const handleStartGame = () => {
+    navigate(`/game?mistakesAllowed=${mistakesAllowed}&difficulty=${difficulty}&isResuming=false`);
+  };
+
+  const handleResumeGame = () => {
+    navigate(`/game?isResuming=true`);
+  };
 
   useEffect(() => {
     const checkSavedGame = async () => {
@@ -31,10 +39,6 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
   const handleDifficultySelect = (value) => {
     setDifficulty(value);
     setIsDifficultyOpen(false);
-  };
-
-  const handleStartGame = () => {
-    onStartGame(mistakesAllowed, difficulty);
   };
 
   const handleViewBestTimes = () => {
@@ -127,7 +131,7 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
         {hasSavedGame && (
           <button
             className="bg-orange-600 text-white px-4 py-2 rounded-lg text-lg font-semibold"
-            onClick={onResumeGame}
+            onClick={handleResumeGame}
           >
             Resume Last Game
           </button>
@@ -148,6 +152,13 @@ const MainMenuPage = ({ onStartGame, onResumeGame }) => {
             <img src={hat} alt="chartbar" className="w-7 h-7" />
           </button>
         </div>
+
+        <SettingsDropdown
+            soundEnabled={soundEnabled}
+            setSoundEnabled={setSoundEnabled}
+            vibrationEnabled={vibrationEnabled}
+            setVibrationEnabled={setVibrationEnabled}
+          />
       </div>
     </div>
   );

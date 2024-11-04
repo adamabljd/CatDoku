@@ -3,17 +3,32 @@ import Confetti from 'react-confetti';
 import { useNavigate } from 'react-router-dom';
 import { useWindowSize } from 'react-use';
 import houseLogo from '../assets/icons/house.svg';
+import purrSound from '../assets/sounds/cat_purr.mp3';
 
 const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins }) => {
     const navigate = useNavigate();
     const { width, height } = useWindowSize();
-    const [showConfetti, setShowConfetti] = useState(true);  // Track confetti state
+    const [showConfetti, setShowConfetti] = useState(true); 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const audio = new Audio(purrSound);
+
+    audio.loop = true;
 
     // Stop confetti after 5 seconds
     useEffect(() => {
-        const timer = setTimeout(() => setShowConfetti(false), 5000);
-        return () => clearTimeout(timer);  // Cleanup on unmount
-    }, []);
+        // Start playing the sound
+        audio.play().catch(error => console.log("Audio play error:", error));
+
+        // Stop confetti after 5 seconds
+        const confettiTimer = setTimeout(() => setShowConfetti(false), 5000);
+
+        return () => {
+            // Cleanup: stop the sound and reset position when component unmounts
+            clearTimeout(confettiTimer);
+            audio.pause();
+            audio.currentTime = 0;
+        };
+    }, [audio]);
 
     const handleReturnToMenu = () => {
         navigate("/");

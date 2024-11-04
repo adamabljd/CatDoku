@@ -4,23 +4,22 @@ import CatsRow from "../components/CatsRow";
 import houseLogo from '../assets/icons/house.svg';
 import GameBar from "../components/GameBar";
 import { Storage } from '@capacitor/storage';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import GameWon from "../components/GameWon";
 import GameLost from "../components/GameLost";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import mistakeSound from '../assets/sounds/mistake_cat_sound.mp3';
 
-const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
-  // Function to provide haptic feedback on mistake
-  const triggerHapticFeedback = async () => {
-    try {
-      await Haptics.impact({ style: ImpactStyle.Medium });
-    } catch (error) {
-      console.error("Haptic feedback error:", error);
-    }
-  };
-
+const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const mistakesAllowedParam = searchParams.get("mistakesAllowed");
+  const mistakesAllowed = mistakesAllowedParam === "Infinity" || mistakesAllowedParam === "Unlimited"
+    ? Infinity
+    : parseInt(mistakesAllowedParam) || 3;
+  const initialDifficulty = searchParams.get("difficulty") || "Medium";
+  const isResuming = searchParams.get("isResuming") === "true";
+
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [difficulty, setDifficulty] = useState(initialDifficulty);
@@ -46,9 +45,17 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   const [totalWins, setTotalWins] = useState(0);
   const [freeHintUsed, setFreeHintUsed] = useState(false);
 
+  // Function to provide haptic feedback on mistake
+  const triggerVibration = () => {
+    if (vibrationEnabled) {
+      Haptics.impact({ style: ImpactStyle.Medium }).catch(error => console.log("Vibration error:", error));
+    }
+  };
   const playSound = (sound) => {
-    const audio = new Audio(sound);
-    audio.play();
+    if (soundEnabled) {
+      const audio = new Audio(sound);
+      audio.play().catch(error => console.log("Audio play error:", error));
+    }
   };
 
   const loadStats = async () => {
@@ -227,11 +234,11 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         }
 
         if (mistakenCells.some(cell => cell.row === row && cell.col === col)) {
-        newGrid[row][col] = null; // Clear the cell content in the grid
-        setMistakenCells((prev) =>
-          prev.filter((cell) => !(cell.row === row && cell.col === col))
-        );
-      }
+          newGrid[row][col] = null; // Clear the cell content in the grid
+          setMistakenCells((prev) =>
+            prev.filter((cell) => !(cell.row === row && cell.col === col))
+          );
+        }
       } else {
         // Normal mode: handle mistakes and correct answers
         newNotesGrid[row][col] = [];
@@ -496,8 +503,6 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
     setInitialGrid(newInitialGrid); // Tracks locked cells
   };
 
-
-
   const checkUserSelection = (row, col, selectedNumber) => {
     const correctNumber = solutionGrid[row][col];
 
@@ -508,7 +513,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
       );
       setMistakenCells((prev) => [...prev, { row, col }]);
       playSound(mistakeSound);
-      triggerHapticFeedback();
+      triggerVibration();
       if (mistakes + 1 >= maxMistakes) {
         setGameOver(true);
       }
@@ -591,6 +596,10 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
               onPauseToggle={togglePause}
               onRestart={initGame}
               mistakesAllowed={maxMistakes}
+              soundEnabled={soundEnabled}
+              setSoundEnabled={setSoundEnabled}
+              vibrationEnabled={vibrationEnabled}
+              setVibrationEnabled={setVibrationEnabled}
             />
             <div className="flex items-center justify-center">
               <Grid

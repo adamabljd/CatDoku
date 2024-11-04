@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { Storage } from '@capacitor/storage';
+import React from "react";
 import cat1 from "../assets/cats/Catdoku 1.png"
 import cat2 from "../assets/cats/Catdoku 2.png"
 import cat3 from "../assets/cats/Catdoku 3.png"
