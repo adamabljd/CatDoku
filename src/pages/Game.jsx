@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import GameWon from "../components/GameWon";
 import GameLost from "../components/GameLost";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import mistakeSound from '../assets/sounds/mistake_cat_sound.mp3';
 
 const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   // Function to provide haptic feedback on mistake
@@ -18,7 +19,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
       console.error("Haptic feedback error:", error);
     }
   };
-  
+
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -44,6 +45,11 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
   const [bestTime, setBestTime] = useState(null);
   const [totalWins, setTotalWins] = useState(0);
   const [freeHintUsed, setFreeHintUsed] = useState(false);
+
+  const playSound = (sound) => {
+    const audio = new Audio(sound);
+    audio.play();
+  };
 
   const loadStats = async () => {
     const bestTimeKey = `bestTime_${difficulty}_${maxMistakes}`;
@@ -219,12 +225,13 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         } else {
           newNotesGrid[row][col] = [...notes, number];
         }
+
+        if (mistakenCells.some(cell => cell.row === row && cell.col === col)) {
+        newGrid[row][col] = null; // Clear the cell content in the grid
         setMistakenCells((prev) =>
-          prev.filter(
-            (cell) =>
-              !(cell.row === selectedCell.row && cell.col === selectedCell.col)
-          )
+          prev.filter((cell) => !(cell.row === row && cell.col === col))
         );
+      }
       } else {
         // Normal mode: handle mistakes and correct answers
         newNotesGrid[row][col] = [];
@@ -500,6 +507,7 @@ const Game = ({ isResuming, mistakesAllowed, initialDifficulty }) => {
         prev.filter((cell) => !(cell.row === row && cell.col === col))
       );
       setMistakenCells((prev) => [...prev, { row, col }]);
+      playSound(mistakeSound);
       triggerHapticFeedback();
       if (mistakes + 1 >= maxMistakes) {
         setGameOver(true);
