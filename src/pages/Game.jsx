@@ -45,24 +45,11 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const [totalWins, setTotalWins] = useState(0);
   const [freeHintUsed, setFreeHintUsed] = useState(false);
 
-  const mistakeAudio = useRef(null);
 
   // Function to provide haptic feedback on mistake
   const triggerVibration = () => {
     if (vibrationEnabled) {
       Haptics.impact({ style: ImpactStyle.Medium }).catch(error => console.log("Vibration error:", error));
-    }
-  };
-
-  useEffect(() => {
-    mistakeAudio.current = new Audio(mistakeSound);
-    mistakeAudio.current.load();
-  }, []);
-
-  const playSound = () => {
-    if (soundEnabled && mistakeAudio.current) {
-      mistakeAudio.current.currentTime = 0;
-      mistakeAudio.current.play().catch(error => console.log("Audio play error:", error));
     }
   };
 
@@ -520,7 +507,6 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         prev.filter((cell) => !(cell.row === row && cell.col === col))
       );
       setMistakenCells((prev) => [...prev, { row, col }]);
-      playSound(mistakeSound);
       triggerVibration();
       if (mistakes + 1 >= maxMistakes) {
         setGameOver(true);
