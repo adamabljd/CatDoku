@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Grid from "../components/Grid";
 import CatsRow from "../components/CatsRow";
 import houseLogo from '../assets/icons/house.svg';
@@ -45,16 +45,24 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const [totalWins, setTotalWins] = useState(0);
   const [freeHintUsed, setFreeHintUsed] = useState(false);
 
+  const mistakeAudio = useRef(null);
+
   // Function to provide haptic feedback on mistake
   const triggerVibration = () => {
     if (vibrationEnabled) {
       Haptics.impact({ style: ImpactStyle.Medium }).catch(error => console.log("Vibration error:", error));
     }
   };
-  const playSound = (sound) => {
-    if (soundEnabled) {
-      const audio = new Audio(sound);
-      audio.play().catch(error => console.log("Audio play error:", error));
+
+  useEffect(() => {
+    mistakeAudio.current = new Audio(mistakeSound);
+    mistakeAudio.current.load();
+  }, []);
+
+  const playSound = () => {
+    if (soundEnabled && mistakeAudio.current) {
+      mistakeAudio.current.currentTime = 0;
+      mistakeAudio.current.play().catch(error => console.log("Audio play error:", error));
     }
   };
 
