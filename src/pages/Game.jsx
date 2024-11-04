@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
 import Grid from "../components/Grid";
 import CatsRow from "../components/CatsRow";
@@ -8,7 +9,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import GameWon from "../components/GameWon";
 import GameLost from "../components/GameLost";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
-import mistakeSound from '../assets/sounds/mistake_cat_sound.mp3';
+import correctSound from '../assets/sounds/correct_cell_sound.mp3';
 
 const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
@@ -45,11 +46,25 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const [totalWins, setTotalWins] = useState(0);
   const [freeHintUsed, setFreeHintUsed] = useState(false);
 
+  const correctSoundRef = useRef(new Audio(correctSound));
+  useEffect(() => {
+    // Preload the audio
+    correctSoundRef.current.preload = "auto";
+    correctSoundRef.current.load();
+    correctSoundRef.current.volume = 0.6; // Set to desired volume
+  }, []);
+
+  const playCorrectSound = () => {
+    if (soundEnabled) {
+      correctSoundRef.current.currentTime = 0;
+      correctSoundRef.current.play().catch(error => console.log("Sound error:", error));
+    }
+  };
 
   // Function to provide haptic feedback on mistake
   const triggerVibration = () => {
     if (vibrationEnabled) {
-      Haptics.impact({ style: ImpactStyle.Medium }).catch(error => console.log("Vibration error:", error));
+      Haptics.impact({ style: ImpactStyle.Heavy }).catch(error => console.log("Vibration error:", error));
     }
   };
 
@@ -516,6 +531,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         prev.filter((cell) => !(cell.row === row && cell.col === col))
       );
       setCorrectCells((prev) => [...prev, { row, col }]);
+      playCorrectSound();
     }
   };
 
@@ -577,7 +593,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       {isLoaded && gameOver && !gameWon ? (
         <GameLost mistakes={mistakes} />
       ) : isLoaded && gameWon && !gameOver ? (
-        <GameWon bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} />
+        <GameWon bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} soundEnabled={soundEnabled} />
 
       ) : (
         (

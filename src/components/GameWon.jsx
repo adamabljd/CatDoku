@@ -5,19 +5,22 @@ import { useWindowSize } from 'react-use';
 import houseLogo from '../assets/icons/house.svg';
 import purrSound from '../assets/sounds/cat_purr.mp3';
 
-const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins }) => {
+const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins, soundEnabled }) => {
     const navigate = useNavigate();
     const { width, height } = useWindowSize();
-    const [showConfetti, setShowConfetti] = useState(true); 
+    const [showConfetti, setShowConfetti] = useState(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const audio = new Audio(purrSound);
 
     audio.loop = true;
+    audio.volume = 0.6
 
     // Stop confetti after 5 seconds
     useEffect(() => {
-        // Start playing the sound
-        audio.play().catch(error => console.log("Audio play error:", error));
+        if (soundEnabled) {
+            // Start playing the sound
+            audio.play().catch(error => console.log("Audio play error:", error));
+        }
 
         // Stop confetti after 5 seconds
         const confettiTimer = setTimeout(() => setShowConfetti(false), 5000);
@@ -28,7 +31,7 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins 
             audio.pause();
             audio.currentTime = 0;
         };
-    }, [audio]);
+    });
 
     const handleReturnToMenu = () => {
         navigate("/");
