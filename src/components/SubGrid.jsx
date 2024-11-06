@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import cat1 from "../assets/cats/Catdoku 1.png"
 import cat2 from "../assets/cats/Catdoku 2.png"
 import cat3 from "../assets/cats/Catdoku 3.png"
@@ -11,6 +11,18 @@ import cat9 from "../assets/cats/Catdoku 9.png"
 
 const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCells, isPaused, notesGrid, highlightedNumber }) => {
   const catImages = [null, cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [fadeIn, setFadeIn] = useState(false);
+  const [fadeInBg, setFadeInBg] = useState(false);
+
+  useEffect(() => {
+      setTimeout(() => setFadeInBg(true), 1200);
+      setTimeout(() => {
+        setFadeIn(true);
+        setInitialLoad(false);
+      }, 1000);
+    
+  }, []);
 
   return (
     <div className="grid grid-cols-3">
@@ -37,10 +49,11 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
               ${isMistakenCell ? "bg-red-300" : ""}
               ${isCorrectCell ? "bg-green-300" : ""} 
               ${isHighlighted ? "bg-yellow-200" : ""}
-              ${isLocked ? "bg-gray-200" : ""}
               ${!isPaused && !isLocked && !isCorrectCell ? "hover:cursor-pointer" : ""} 
               ${isHighlightedNumber ? "bg-purple-300" : ""}
               ${isPaused ? "bg-white" : ""}
+              ${initialLoad && fadeInBg && isLocked ? "bg-gray-200 transition-colors duration-700" : !initialLoad && !fadeIn ? "bg-white" : ""}
+              ${fadeInBg && isLocked ? "bg-gray-200" : ""}
               `}
             onClick={() => !isLocked && onCellClick(row, col)}
           >
@@ -54,7 +67,7 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
               </div>
             ) : (
               number !== null && number >= 1 && number <= 9 ? (
-                <img src={catImages[number]} alt={`Cat ${number}`} className="w-full h-full" />
+                <img src={catImages[number]} alt={`Cat ${number}`} className={`w-full h-full ${fadeIn && isLocked ? "opacity-100 transition-opacity duration-700" : !fadeIn ? "opacity-0" : ""}`} />
               ) : ""
             )}
           </div>

@@ -22,6 +22,10 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const isResuming = searchParams.get("isResuming") === "true";
 
   const [isLoaded, setIsLoaded] = useState(false);
+  const [animateGrid, setAnimateGrid] = useState(false);
+  const [animateGameBar, setAnimateGameBar] = useState(false);
+  const [animateCatsRow, setAnimateCatsRow] = useState(false);
+  const [animateButton, setAnimateButton] = useState(false);
 
   const [difficulty, setDifficulty] = useState(initialDifficulty);
   const [grid, setGrid] = useState(Array(9).fill(null).map(() => Array(9).fill(null)));
@@ -142,10 +146,19 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       }
 
       setIsLoaded(true);
+      setTimeout(() => setAnimateGrid(true), 100);
     };
     loadGame();
     loadStats();
   }, [isResuming]);
+
+  useEffect(() => {
+    if (animateGrid) {
+      setTimeout(() => setAnimateGameBar(true), 300);
+      setTimeout(() => setAnimateCatsRow(true), 300);
+      setTimeout(() => setAnimateButton(true), 1000);
+    }
+  }, [animateGrid]);
 
   // Save game state in individual keys
   useEffect(() => {
@@ -598,20 +611,26 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       ) : (
         (
           <>
-            <GameBar
-              difficulty={difficulty}
-              mistakes={mistakes}
-              timer={formatTime(timer)}
-              isPaused={isPaused}
-              onPauseToggle={togglePause}
-              onRestart={initGame}
-              mistakesAllowed={maxMistakes}
-              soundEnabled={soundEnabled}
-              setSoundEnabled={setSoundEnabled}
-              vibrationEnabled={vibrationEnabled}
-              setVibrationEnabled={setVibrationEnabled}
-            />
-            <div className="flex items-center justify-center">
+            <div
+              className={`relative z-10 transition-all duration-500 ease-out ${animateGameBar ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+                }`}
+            >
+              <GameBar
+                difficulty={difficulty}
+                mistakes={mistakes}
+                timer={formatTime(timer)}
+                isPaused={isPaused}
+                onPauseToggle={togglePause}
+                onRestart={initGame}
+                mistakesAllowed={maxMistakes}
+                soundEnabled={soundEnabled}
+                setSoundEnabled={setSoundEnabled}
+                vibrationEnabled={vibrationEnabled}
+                setVibrationEnabled={setVibrationEnabled}
+              />
+            </div>
+            <div className={`flex items-center justify-center transition-all duration-500 ease-out ${animateGrid ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+              }`}>
               <Grid
                 grid={grid}
                 notesGrid={notesGrid}
@@ -624,18 +643,26 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                 highlightedNumber={highlightedNumber}
               />
             </div>
-            <CatsRow
-              onNumberClick={handleNumberClick}
-              isSelected={isSelected}
-              onEraseClick={handleEraseClick}
-              isNotesMode={isNotesMode}
-              toggleNotesMode={toggleNotesMode}
-              revealNumber={revealNumber}
-              freeHintUsed={freeHintUsed}
-              setFreeHintUsed={setFreeHintUsed}
-            />
+            <div
+              className={`transition-all duration-500 ease-out ${animateCatsRow ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+                }`}
+            >
+              <CatsRow
+                onNumberClick={handleNumberClick}
+                isSelected={isSelected}
+                onEraseClick={handleEraseClick}
+                isNotesMode={isNotesMode}
+                toggleNotesMode={toggleNotesMode}
+                revealNumber={revealNumber}
+                freeHintUsed={freeHintUsed}
+                setFreeHintUsed={setFreeHintUsed}
+              />
+            </div>
 
-            <div className="flex items-center justify-center mt-4 mb-5">
+            <div
+              className={`flex items-center justify-center mt-4 mb-5 transition-opacity duration-500 ease-out ${animateButton ? "opacity-100" : "opacity-0"
+                }`}
+            >
               <button
                 className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
                 onClick={handleReturnToMenu}
