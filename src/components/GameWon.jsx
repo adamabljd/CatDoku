@@ -5,7 +5,7 @@ import { useWindowSize } from 'react-use';
 import houseLogo from '../assets/icons/house.svg';
 import purrSound from '../assets/sounds/cat_purr.mp3';
 
-const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins, soundEnabled }) => {
+const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins, soundEnabled, imageURL }) => {
     const navigate = useNavigate();
     const { width, height } = useWindowSize();
     const [showConfetti, setShowConfetti] = useState(true);
@@ -43,6 +43,11 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
                 <Confetti width={width} height={height} recycle={true} numberOfPieces={500} />
             )}
             <div className="text-center p-6 mx-2 bg-white rounded-lg shadow-lg max-w-full">
+                {imageURL && (
+                    <div className="flex items-center justify-center mb-3">
+                        <img src={imageURL} alt="Completed Grid" className='h-52 aspect-square md:w-72 md:h-72 shadow-md'/>
+                    </div>
+                )}
                 <h2 className="text-4xl font-bold text-green-600 mb-4">Congratulations!</h2>
                 <p className="text-xl text-gray-700 mb-6">You've won the game!</p>
                 <div className='flex justify-between mb-1'><p>Your Time : {time}</p> <p>Best Time : {bestTime}</p></div>

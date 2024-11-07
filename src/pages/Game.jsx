@@ -10,6 +10,7 @@ import GameWon from "../components/GameWon";
 import GameLost from "../components/GameLost";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import correctSound from '../assets/sounds/correct_cell_sound.mp3';
+import html2canvas from "html2canvas";
 
 const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
@@ -49,6 +50,31 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const [bestTime, setBestTime] = useState(null);
   const [totalWins, setTotalWins] = useState(0);
   const [freeHintUsed, setFreeHintUsed] = useState(false);
+
+  const [imageURL, setImageURL] = useState(null); // State to store the image URL
+  const gridRef = useRef(null);
+
+  const captureGridAsImage = async () => {
+    if (gridRef.current) {
+      const canvas = await html2canvas(gridRef.current, {
+        scale: 5,
+        useCORS: true,
+        backgroundColor: null,
+      });
+      const highResCanvas = document.createElement("canvas");
+    highResCanvas.width = canvas.width;
+    highResCanvas.height = canvas.height;
+    const ctx = highResCanvas.getContext("2d");
+    ctx.drawImage(canvas, 0, 0);
+
+    // Convert to data URL at maximum quality for PNG, or specify quality if using JPEG
+    const image = highResCanvas.toDataURL("image/png", 1.0);
+      setImageURL(image);
+    }
+  };
+
+  // Capture the grid when the game is won
+
 
   const correctSoundRef = useRef(new Audio(correctSound));
   useEffect(() => {
@@ -357,10 +383,13 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     }
 
     // If all checks pass, set game won to true
-    setGameWon(true);
-    await checkAndSetBestTime();
-    await incrementWinCount();
-    loadStats();
+    setTimeout(async () => {
+      await captureGridAsImage();
+      await checkAndSetBestTime();
+      await incrementWinCount();
+      setGameWon(true);
+      loadStats();
+    }, 10);
   };
 
   // Function to check and update best time for the current difficulty and max mistakes setting
@@ -384,7 +413,6 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     setTotalWins(winCount + 1)
     await Storage.set({ key, value: JSON.stringify(winCount + 1) });
   };
-
 
   //------------------------------ GAME'S CORE MECANICS ----------------------------------------------
   // Function to check if a number can be placed in a cell
@@ -595,7 +623,6 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     navigate("/");
   };
 
-
   if (!isLoaded) {
     return <div>Loading game data...</div>;
   }
@@ -606,12 +633,12 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       {isLoaded && gameOver && !gameWon ? (
         <GameLost mistakes={mistakes} />
       ) : isLoaded && gameWon && !gameOver ? (
-        <GameWon bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} soundEnabled={soundEnabled} />
+        <GameWon imageURL={imageURL} bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} soundEnabled={soundEnabled} />
 
       ) : (
         (
           <>
-            <div
+            <div 
               className={`relative z-10 transition-all duration-500 ease-out ${animateGameBar ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
                 }`}
             >
@@ -629,7 +656,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                 setVibrationEnabled={setVibrationEnabled}
               />
             </div>
-            <div className={`flex items-center justify-center transition-all duration-500 ease-out ${animateGrid ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+            <div
+            ref={gridRef} className={`flex items-center justify-center transition-all duration-500 ease-out ${animateGrid ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
               }`}>
               <Grid
                 grid={grid}

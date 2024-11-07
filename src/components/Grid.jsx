@@ -28,7 +28,11 @@ const Grid = ({ grid, initialGrid, selectedCell, onCellClick, mistakenCells, cor
   }
 
   return (
-    <div className="grid grid-cols-3 border-2 rounded border-slate-900 bg-white w-fit">
+
+    <div className="relative">
+    {/* Border overlay in front of the subgrid */}
+    <div className="absolute inset-0 border-[0.188rem] border-slate-900 z-10 pointer-events-none rounded-lg"></div>
+    <div className="grid grid-cols-3 border-2 rounded-lg border-slate-900 bg-white w-fit">
       {subGrids.map((subGrid, index) => (
         <div key={index} className="border border-slate-900 w-full h-fit">
           <SubGrid
@@ -43,6 +47,7 @@ const Grid = ({ grid, initialGrid, selectedCell, onCellClick, mistakenCells, cor
           />
         </div>
       ))}
+    </div>
     </div>
   );
 };
