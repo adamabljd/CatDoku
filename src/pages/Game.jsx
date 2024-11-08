@@ -52,6 +52,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const [bestTime, setBestTime] = useState(null);
   const [totalWins, setTotalWins] = useState(0);
   const [freeHintUsed, setFreeHintUsed] = useState(false);
+  const [loadingAd, setLoadingAd] = useState(false); 
 
   const [imageURL, setImageURL] = useState(null); // State to store the image URL
   const gridRef = useRef(null);
@@ -648,6 +649,11 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
   return (
     <div className="space-y-5 mt-5 landscape:pb-32">
+      {loadingAd && ( // Show full-page overlay when loading an ad
+        <div className="fixed inset-0 z-50 bg-beige flex justify-center items-center">
+          <span>Loading ad...</span>
+        </div>
+      )}
       {/* Render based on explicit checks */}
       {isLoaded && gameOver && !gameWon ? (
         <GameLost mistakes={mistakes} />
@@ -703,6 +709,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                 revealNumber={revealNumber}
                 freeHintUsed={freeHintUsed}
                 setFreeHintUsed={setFreeHintUsed}
+                setLoadingAd={setLoadingAd}
               />
             </div>
 

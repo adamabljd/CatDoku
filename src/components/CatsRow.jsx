@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import cat1 from "../assets/cats/Catdoku 1.png"
 import cat2 from "../assets/cats/Catdoku 2.png"
 import cat3 from "../assets/cats/Catdoku 3.png"
@@ -12,8 +12,9 @@ import backspace from "../assets/icons/backspace.svg"
 import penLogo from "../assets/icons/pen.svg"
 import hintLogo from "../assets/icons/lightbulb.svg"
 import videoLogo from "../assets/icons/video.svg"
+import { AdMob } from "@capacitor-community/admob";
 
-const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed }) => {
+const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed, setLoadingAd }) => {
   const cats = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
 
   const handleCatClick = (event, index) => {
@@ -21,10 +22,30 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
     onNumberClick(index + 1);
   };
 
-  const handleHintClick = () => {
-    setFreeHintUsed(true);
-    revealNumber();
+  const handleHintClick = async () => {
+    if (!freeHintUsed) {
+      setFreeHintUsed(true);
+      revealNumber();
+    } else {
+      try {
+        setLoadingAd(true);
+
+        await AdMob.prepareRewardVideoAd({
+          adId: 'ca-app-pub-3940256099942544/5224354917',
+        });
+        const result = await AdMob.showRewardVideoAd();
+        setLoadingAd(false);
+
+        if (result) {
+          revealNumber();
+        }
+      } catch (error) {
+        console.log("Failed to show rewarded ad:", error);
+        setLoadingAd(false);
+      }
+    }
   };
+
 
 
   return (
