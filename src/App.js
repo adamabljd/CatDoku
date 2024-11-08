@@ -9,18 +9,20 @@ import { AdMob } from '@capacitor-community/admob';
 function App() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
-  
+
   useEffect(() => {
-    // Initialize AdMob
-    const initializeAdMob = async () => {
-      await AdMob.initialize({
-        requestTrackingAuthorization: true, // Prompt iOS users for tracking consent if needed
-        testingDevices: [],
-        initializeForTesting: true // Replace with actual test device ID for development
-      });
-    };
-    
-    initializeAdMob();
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+      // Initialize AdMob
+      const initializeAdMob = async () => {
+        await AdMob.initialize({
+          requestTrackingAuthorization: true,
+          testingDevices: [],
+          initializeForTesting: true
+        });
+      };
+
+      initializeAdMob();
+    }
   }, []);
 
   return (

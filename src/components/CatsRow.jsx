@@ -29,12 +29,32 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
     } else {
       try {
         setLoadingAd(true);
+        let result = null
+        switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+          case 'android':
+            await AdMob.prepareRewardVideoAd({
+              adId: 'ca-app-pub-3940256099942544/5224354917',
+            });
+            result = await AdMob.showRewardVideoAd();
+            setLoadingAd(false);
+            break;
 
-        await AdMob.prepareRewardVideoAd({
-          adId: 'ca-app-pub-3940256099942544/5224354917',
-        });
-        const result = await AdMob.showRewardVideoAd();
-        setLoadingAd(false);
+          case 'ios':
+            await AdMob.prepareRewardVideoAd({
+              adId: '',
+            });
+            result = await AdMob.showRewardVideoAd();
+            setLoadingAd(false);
+            break;
+
+          case 'poki':
+            console.log("Poki ads will be implemented here.");
+            break;
+
+          default:
+            console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+            break;
+        };
 
         if (result) {
           revealNumber();

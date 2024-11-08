@@ -624,22 +624,45 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     navigate("/");
   };
 
-  const showBottomBanner = async () => {
-    await AdMob.showBanner({
-      adId: 'ca-app-pub-3940256099942544/6300978111', // Test ID for bottom banner
-      position: BannerAdPosition.BOTTOM_CENTER,
-      size: BannerAdSize.ADAPTIVE_BANNER,
-    });
+  const showAd = async () => {
+    switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+      case 'android':
+        await AdMob.showBanner({
+          adId: 'ca-app-pub-3940256099942544/6300978111',
+          position: BannerAdPosition.BOTTOM_CENTER,
+          size: BannerAdSize.ADAPTIVE_BANNER,
+        });
+        break;
+
+      case 'ios':
+        await AdMob.showBanner({
+          adId: '',
+          position: BannerAdPosition.BOTTOM_CENTER,
+          size: BannerAdSize.ADAPTIVE_BANNER,
+        });
+        break;
+
+      case 'poki':
+        console.log("Poki ads will be implemented here.");
+        // Implement Poki ad logic here when ready
+        break;
+
+      default:
+        console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+        break;
+    }
   };
 
   useEffect(() => {
-    AdMob.removeBanner().then(() => {
-      showBottomBanner();
-    });
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+      AdMob.removeBanner().then(() => {
+        showAd();
+      });
 
-    return () => {
-      AdMob.removeBanner();
-    };
+      return () => {
+        AdMob.removeBanner();
+      };
+    }
   }, []);
   
 
@@ -656,7 +679,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       )}
       {/* Render based on explicit checks */}
       {isLoaded && gameOver && !gameWon ? (
-        <GameLost mistakes={mistakes} />
+        <GameLost mistakes={mistakes} setMistakes={setMistakes} setGameOver={setGameOver} setLoadingAd={setLoadingAd} />
       ) : isLoaded && gameWon && !gameOver ? (
         <GameWon imageURL={imageURL} bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} soundEnabled={soundEnabled} />
 

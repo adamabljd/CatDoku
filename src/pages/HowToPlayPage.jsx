@@ -10,29 +10,51 @@ import penLogo from "../assets/icons/pen.svg"
 import hintLogo from "../assets/icons/lightbulb.svg"
 import pauseIcon from "../assets/icons/pause.svg"
 import deadCatIcon from "../assets/cats/deadcat.png"
-import { AdMob, BannerAdPosition } from '@capacitor-community/admob';
+import { AdMob, BannerAdPosition, BannerAdSize } from '@capacitor-community/admob';
 
 const HowToPlayPage = () => {
     const navigate = useNavigate();
 
-    // Show bottom banner
-  const showBottomBanner = async () => {
-    await AdMob.showBanner({
-      adId: 'ca-app-pub-3940256099942544/6300978111', // Test ID for bottom banner
-      position: BannerAdPosition.BOTTOM_CENTER,
-      size: "SMART_BANNER",
-    });
-  };
+    const showAd = async () => {
+        switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+            case 'android':
+                await AdMob.showBanner({
+                    adId: 'ca-app-pub-3940256099942544/6300978111',
+                    position: BannerAdPosition.BOTTOM_CENTER,
+                    size: BannerAdSize.ADAPTIVE_BANNER,
+                });
+                break;
 
-  useEffect(() => {
-    AdMob.removeBanner().then(() => {
-      showBottomBanner();
-    });
+            case 'ios':
+                await AdMob.showBanner({
+                    adId: '',
+                    position: BannerAdPosition.BOTTOM_CENTER,
+                    size: BannerAdSize.ADAPTIVE_BANNER,
+                });
+                break;
 
-    return () => {
-      AdMob.removeBanner();
+            case 'poki':
+                console.log("Poki ads will be implemented here.");
+                // Implement Poki ad logic here when ready
+                break;
+
+            default:
+                console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+                break;
+        }
     };
-  });
+
+    useEffect(() => {
+        if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+            AdMob.removeBanner().then(() => {
+                showAd();
+            });
+
+            return () => {
+                AdMob.removeBanner();
+            };
+        }
+    }, []);
 
     return (
         <div className="py-6 text-gray-800 flex flex-col items-center space-y-5 pb-20 landscape:pb-32">

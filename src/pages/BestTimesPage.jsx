@@ -4,7 +4,7 @@ import { Storage } from '@capacitor/storage';
 import { useNavigate } from 'react-router-dom';
 import houseLogo from '../assets/icons/house.svg';
 import LeaderboardTable from '../components/LeaderboardTable';
-import { AdMob, BannerAdPosition } from '@capacitor-community/admob';
+import { AdMob, BannerAdPosition, BannerAdSize } from '@capacitor-community/admob';
 
 const difficulties = ["Easy", "Medium", "Hard"];
 const mistakesOptions = [1, 2, 3, 4, 5, Infinity];
@@ -41,25 +41,47 @@ const BestTimesPage = () => {
     loadLeaderboardData();
   }, []);
 
-  // Show bottom banner
-  const showBottomBanner = async () => {
-    await AdMob.showBanner({
-      adId: 'ca-app-pub-3940256099942544/6300978111', // Test ID for bottom banner
-      position: BannerAdPosition.BOTTOM_CENTER,
-      size: "SMART_BANNER",
-    });
+  const showAd = async () => {
+    switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+      case 'android':
+        await AdMob.showBanner({
+          adId: 'ca-app-pub-3940256099942544/6300978111',
+          position: BannerAdPosition.BOTTOM_CENTER,
+          size: BannerAdSize.ADAPTIVE_BANNER,
+        });
+        break;
+
+      case 'ios':
+        await AdMob.showBanner({
+          adId: '',
+          position: BannerAdPosition.BOTTOM_CENTER,
+          size: BannerAdSize.ADAPTIVE_BANNER,
+        });
+        break;
+
+      case 'poki':
+        console.log("Poki ads will be implemented here.");
+        // Implement Poki ad logic here when ready
+        break;
+
+      default:
+        console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+        break;
+    }
   };
 
   useEffect(() => {
-    AdMob.removeBanner().then(() => {
-      showBottomBanner();
-    });
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+      AdMob.removeBanner().then(() => {
+        showAd();
+      });
 
-    return () => {
-      AdMob.removeBanner();
-    };
-  });
-
+      return () => {
+        AdMob.removeBanner();
+      };
+    }
+  }, []);
+  
   const formatTime = (time) => {
     if (!time) return "-";
     const minutes = Math.floor(time / 60);
