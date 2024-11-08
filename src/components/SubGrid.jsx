@@ -44,7 +44,7 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
         return (
           <div
             key={index}
-            className={`cell w-full h-full max-w-12 max-h-10 md:max-w-14 md:max-h-12 lg:max-w-16 lg:max-h-14 xl:max-w-16 xl:max-h-14 aspect-square border border-gray-300 flex items-center justify-center 
+            className={`cell w-full h-full max-w-12 max-h-10  xl:max-w-16 xl:max-h-14 aspect-square border border-gray-300 flex items-center justify-center 
               ${isSelectedCell ? "bg-blue-300" : ""}
               ${isMistakenCell ? "bg-red-300" : ""}
               ${isCorrectCell ? "bg-green-300" : ""} 

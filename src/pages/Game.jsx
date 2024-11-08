@@ -11,10 +11,12 @@ import GameLost from "../components/GameLost";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import correctSound from '../assets/sounds/correct_cell_sound.mp3';
 import html2canvas from "html2canvas";
+import { AdMob, BannerAdPosition, BannerAdSize } from "@capacitor-community/admob";
 
 const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  
   const mistakesAllowedParam = searchParams.get("mistakesAllowed");
   const mistakesAllowed = mistakesAllowedParam === "Infinity" || mistakesAllowedParam === "Unlimited"
     ? Infinity
@@ -54,6 +56,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const [imageURL, setImageURL] = useState(null); // State to store the image URL
   const gridRef = useRef(null);
 
+
   const captureGridAsImage = async () => {
     if (gridRef.current) {
       const canvas = await html2canvas(gridRef.current, {
@@ -72,9 +75,6 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       setImageURL(image);
     }
   };
-
-  // Capture the grid when the game is won
-
 
   const correctSoundRef = useRef(new Audio(correctSound));
   useEffect(() => {
@@ -623,12 +623,31 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     navigate("/");
   };
 
+  const showBottomBanner = async () => {
+    await AdMob.showBanner({
+      adId: 'ca-app-pub-3940256099942544/6300978111', // Test ID for bottom banner
+      position: BannerAdPosition.BOTTOM_CENTER,
+      size: BannerAdSize.ADAPTIVE_BANNER,
+    });
+  };
+
+  useEffect(() => {
+    AdMob.removeBanner().then(() => {
+      showBottomBanner();
+    });
+
+    return () => {
+      AdMob.removeBanner();
+    };
+  }, []);
+  
+
   if (!isLoaded) {
     return <div>Loading game data...</div>;
   }
 
   return (
-    <div className="space-y-5 mt-5 landscape:mb-10">
+    <div className="space-y-5 mt-5 landscape:pb-32">
       {/* Render based on explicit checks */}
       {isLoaded && gameOver && !gameWon ? (
         <GameLost mistakes={mistakes} />

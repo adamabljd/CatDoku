@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import houseLogo from '../assets/icons/house.svg';
 import objective from "../assets/icons/objective.svg";
@@ -10,12 +10,32 @@ import penLogo from "../assets/icons/pen.svg"
 import hintLogo from "../assets/icons/lightbulb.svg"
 import pauseIcon from "../assets/icons/pause.svg"
 import deadCatIcon from "../assets/cats/deadcat.png"
+import { AdMob, BannerAdPosition } from '@capacitor-community/admob';
 
 const HowToPlayPage = () => {
     const navigate = useNavigate();
 
+    // Show bottom banner
+  const showBottomBanner = async () => {
+    await AdMob.showBanner({
+      adId: 'ca-app-pub-3940256099942544/6300978111', // Test ID for bottom banner
+      position: BannerAdPosition.BOTTOM_CENTER,
+      size: "SMART_BANNER",
+    });
+  };
+
+  useEffect(() => {
+    AdMob.removeBanner().then(() => {
+      showBottomBanner();
+    });
+
+    return () => {
+      AdMob.removeBanner();
+    };
+  });
+
     return (
-        <div className="py-6 text-gray-800 flex flex-col items-center space-y-5">
+        <div className="py-6 text-gray-800 flex flex-col items-center space-y-5 pb-20 landscape:pb-32">
             <h1 className="text-3xl font-bold mb-1 text-center px-6">How to Play MiawDoku!</h1>
 
             <section className="space-y-4 max-w-lg">

@@ -42,24 +42,30 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
             {showConfetti && (
                 <Confetti width={width} height={height} recycle={true} numberOfPieces={500} />
             )}
-            <div className="text-center p-6 mx-2 bg-white rounded-lg shadow-lg max-w-full">
-                {imageURL && (
-                    <div className="flex items-center justify-center mb-3">
-                        <img src={imageURL} alt="Completed Grid" className='h-52 aspect-square md:w-72 md:h-72 shadow-md'/>
+            <div className="text-center p-6 mx-2 bg-white rounded-lg shadow-lg max-w-full landscape:flex landscape:flex-row landscape:items-center">
+                <div>
+                    {imageURL && (
+                        <div className="flex items-center justify-center mb-3">
+                            <img src={imageURL} alt="Completed Grid" className='h-52' />
+                        </div>
+                    )}
+                    <h2 className="text-4xl font-bold text-green-600 mb-4">Congratulations!</h2>
+                    <p className="text-xl text-gray-700 mb-6">You've won the game!</p>
+                </div>
+                <div>
+
+
+                    <div className='flex justify-between mb-1'><p>Your Time : {time}</p> <p>Best Time : {bestTime}</p></div>
+                    {maxMistakes < 6 && <p className='mb-1'>Mistakes : {mistakes} / {maxMistakes}</p>}
+                    <p>Total wins in <span className='text-blue-700 font-bold'>{difficulty}</span> with <span className='text-blue-700 font-bold'>{maxMistakes < 6 ? maxMistakes : "Unlimited"}</span> mistakes : {totalWins}</p>
+                    <div className="flex items-center justify-center mt-4 mb-5">
+                        <button
+                            className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
+                            onClick={handleReturnToMenu}
+                        >
+                            <img src={houseLogo} alt="house" className="h-7 w-7" />
+                        </button>
                     </div>
-                )}
-                <h2 className="text-4xl font-bold text-green-600 mb-4">Congratulations!</h2>
-                <p className="text-xl text-gray-700 mb-6">You've won the game!</p>
-                <div className='flex justify-between mb-1'><p>Your Time : {time}</p> <p>Best Time : {bestTime}</p></div>
-                {maxMistakes < 6 && <p className='mb-1'>Mistakes : {mistakes} / {maxMistakes}</p>}
-                <p>Total wins in <span className='text-blue-700 font-bold'>{difficulty}</span> with <span className='text-blue-700 font-bold'>{maxMistakes < 6 ? maxMistakes : "Unlimited"}</span> mistakes : {totalWins}</p>
-                <div className="flex items-center justify-center mt-4 mb-5">
-                    <button
-                        className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
-                        onClick={handleReturnToMenu}
-                    >
-                        <img src={houseLogo} alt="house" className="h-7 w-7" />
-                    </button>
                 </div>
             </div>
         </div>

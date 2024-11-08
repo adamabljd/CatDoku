@@ -4,6 +4,7 @@ import { Storage } from '@capacitor/storage';
 import { useNavigate } from 'react-router-dom';
 import houseLogo from '../assets/icons/house.svg';
 import LeaderboardTable from '../components/LeaderboardTable';
+import { AdMob, BannerAdPosition } from '@capacitor-community/admob';
 
 const difficulties = ["Easy", "Medium", "Hard"];
 const mistakesOptions = [1, 2, 3, 4, 5, Infinity];
@@ -40,6 +41,25 @@ const BestTimesPage = () => {
     loadLeaderboardData();
   }, []);
 
+  // Show bottom banner
+  const showBottomBanner = async () => {
+    await AdMob.showBanner({
+      adId: 'ca-app-pub-3940256099942544/6300978111', // Test ID for bottom banner
+      position: BannerAdPosition.BOTTOM_CENTER,
+      size: "SMART_BANNER",
+    });
+  };
+
+  useEffect(() => {
+    AdMob.removeBanner().then(() => {
+      showBottomBanner();
+    });
+
+    return () => {
+      AdMob.removeBanner();
+    };
+  });
+
   const formatTime = (time) => {
     if (!time) return "-";
     const minutes = Math.floor(time / 60);
@@ -52,7 +72,7 @@ const BestTimesPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen">
+    <div className="flex flex-col items-center min-h-screen pb-20 landscape:pb-32">
       <h2 className="text-2xl font-bold mb-3 mt-10">Leaderboard</h2>
 
       <div className='flex-grow w-full overflow-y-auto px-2 max-h-[80vh] space-y-2 pb-3'>

@@ -6,6 +6,7 @@ import chartBar from "../assets/icons/chart_bar.svg"
 import { Storage } from '@capacitor/storage';
 import { useNavigate } from "react-router-dom";
 import SettingsDropdown from "../components/SettingsDropdown";
+import { AdMob, BannerAdPosition } from '@capacitor-community/admob';
 
 const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
@@ -14,6 +15,25 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
   const [hasSavedGame, setHasSavedGame] = useState(false);
   const [isDifficultyOpen, setIsDifficultyOpen] = useState(false);
   const [isMistakesOpen, setIsMistakesOpen] = useState(false);
+
+  // Show bottom banner
+  const showBottomBanner = async () => {
+    await AdMob.showBanner({
+      adId: 'ca-app-pub-3940256099942544/6300978111',
+      position: BannerAdPosition.BOTTOM_CENTER,
+      size: "SMART_BANNER",
+    });
+  };
+
+  useEffect(() => {
+    AdMob.removeBanner().then(() => {
+      showBottomBanner();
+    });
+
+    return () => {
+      AdMob.removeBanner();
+    };
+  });
 
   const handleStartGame = () => {
     navigate(`/game?mistakesAllowed=${mistakesAllowed}&difficulty=${difficulty}&isResuming=false`);
@@ -50,7 +70,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-10 landscape:pb-20">
       <div className="flex flex-col items-center mt-20 mb-10 landscape:mt-10">
         <img src={logo} alt="logo" className="w-56 aspect-square shadow rounded-[1.25rem]" />
         <h1 className="text-4xl font-bold text-center mt-3">MiawDoku!</h1>
