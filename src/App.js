@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Game from './pages/Game';
 import MainMenuPage from './pages/MainMenuPage';
 import BestTimesPage from './pages/BestTimesPage';
@@ -54,7 +54,7 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <Router basename="/">
       <div className="min-h-screen bg-beige px-3">
         <Routes>
           <Route path="/" element={<MainMenuPage
