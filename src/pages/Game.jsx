@@ -57,8 +57,13 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
   const [imageURL, setImageURL] = useState(null); // State to store the image URL
   const gridRef = useRef(null);
+  const TimerAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
+  const RestartGameAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
+  const ResumeGameAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
+  const rePlayAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
 
-  const showTimedAd = async () => {
+
+  const showAd = async (id) => {
     if (isAd) return;
     setLoadingAd(true);
     setIsAd(true)
@@ -66,15 +71,14 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
         case 'android':
           await AdMob.prepareInterstitial({
-            adId: 'ca-app-pub-3940256099942544/1033173712',
+            adId: id,
           });
           await AdMob.showInterstitial();
-          console.warn("Noddddddddddddd.");
           break;
 
         case 'ios':
           await AdMob.prepareInterstitial({
-            adId: 'ca-app-pub-3940256099942544/4411468910',
+            adId: id,
           });
           await AdMob.showInterstitial();
           break;
@@ -90,11 +94,24 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     }
   };
 
+  const onRestart = () => {
+    initGame()
+    switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+      case "android":
+        showAd(RestartGameAdId.android);
+        break;
+      case "ios":
+        showAd(RestartGameAdId.ios);
+        break;
+      default:
+        break;
+    }
+  }
+
   useEffect(() => {
     if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
       let adDismissListener;
 
-      // Add the listener and store the handle for cleanup
       const addAdDismissListener = async () => {
         adDismissListener = await AdMob.addListener(
           InterstitialAdPluginEvents.Dismissed,
@@ -106,10 +123,9 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
       addAdDismissListener();
 
-      // Cleanup listener on component unmount
       return () => {
         if (adDismissListener) {
-          adDismissListener.remove(); // Properly remove listener
+          adDismissListener.remove();
         }
       };
     }
@@ -177,6 +193,18 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   };
 
   useEffect(() => {
+    if (isResuming) {
+      switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+        case "android":
+          showAd(ResumeGameAdId.android);
+          break;
+        case "ios":
+          showAd(ResumeGameAdId.ios);
+          break;
+        default:
+          break;
+      }
+    }
     const loadGame = async () => {
       if (isResuming) {
         const [
@@ -357,7 +385,16 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         setTimer((prevTimer) => {
           const newTimer = prevTimer + 1;
           if (newTimer % 15 === 0) {
-            showTimedAd();
+            switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+              case "android":
+                showAd(TimerAdId.android);
+                break;
+              case "ios":
+                showAd(TimerAdId.ios);
+                break;
+              default:
+                break;
+            }
           }
           return newTimer;
         });
@@ -376,6 +413,18 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   };
 
   const togglePause = () => {
+    if (isPaused) {
+      switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+        case "android":
+          showAd(rePlayAdId.android);
+          break;
+        case "ios":
+          showAd(rePlayAdId.ios);
+          break;
+        default:
+          break;
+      }
+    }
     setIsPaused((prev) => !prev);
   };
 
@@ -760,7 +809,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     navigate("/");
   };
 
-  const showAd = async () => {
+  const showBannerAd = async () => {
     switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
       case 'android':
         await AdMob.showBanner({
@@ -787,7 +836,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   useEffect(() => {
     if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
       AdMob.removeBanner().then(() => {
-        showAd();
+        showBannerAd();
       });
 
       return () => {
@@ -827,7 +876,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                 timer={formatTime(timer)}
                 isPaused={isPaused}
                 onPauseToggle={togglePause}
-                onRestart={initGame}
+                onRestart={onRestart}
                 mistakesAllowed={maxMistakes}
                 soundEnabled={soundEnabled}
                 setSoundEnabled={setSoundEnabled}

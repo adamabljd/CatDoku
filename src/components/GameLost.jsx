@@ -16,24 +16,23 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
         try {
             setIsAd(true)
             setLoadingAd(true);
-            let result = null
             switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
                 case 'android':
                     await AdMob.prepareRewardVideoAd({
                         adId: 'ca-app-pub-3940256099942544/5224354917',
                     });
-                    result = await AdMob.showRewardVideoAd();
+                    await AdMob.showRewardVideoAd();
                     break;
 
                 case 'ios':
                     await AdMob.prepareRewardVideoAd({
                         adId: '',
                     });
-                    result = await AdMob.showRewardVideoAd();
+                    await AdMob.showRewardVideoAd();
                     break;
 
                 case 'poki':
-                    result = await pokiService.showRewardedAd();
+                    await pokiService.showRewardedAd();
                     break;
 
                 default:
