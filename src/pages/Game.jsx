@@ -472,8 +472,6 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       }
       setNotesGrid(newNotesGrid);
       setGrid(newGrid);
-      setSelectedCell(null);
-      setIsSelected(false);
       if (!isNotesMode) {
         checkIfGameWon(newGrid);
       }
@@ -756,6 +754,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       setMistakenCells((prev) =>
         prev.filter((cell) => !(cell.row === row && cell.col === col))
       );
+      setSelectedCell(null);
+      setIsSelected(false);
       setCorrectCells((prev) => [...prev, { row, col }]);
       playCorrectSound();
     }
