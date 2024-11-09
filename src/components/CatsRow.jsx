@@ -12,10 +12,10 @@ import backspace from "../assets/icons/backspace.svg"
 import penLogo from "../assets/icons/pen.svg"
 import hintLogo from "../assets/icons/lightbulb.svg"
 import videoLogo from "../assets/icons/video.svg"
-import { AdMob } from "@capacitor-community/admob";
+import { AdMob, RewardAdPluginEvents } from "@capacitor-community/admob";
 import pokiService from "../pokiService";
 
-const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed, setLoadingAd }) => {
+const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed, setLoadingAd, setIsAd }) => {
   const cats = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
 
   const handleCatClick = (event, index) => {
@@ -29,6 +29,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
       revealNumber();
     } else {
       try {
+        setIsAd(true)
         setLoadingAd(true);
         let result = null
         switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
@@ -53,21 +54,48 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
           default:
             console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
             setLoadingAd(false);
+            setIsAd(false);
             break;
         };
 
-        if (result) {
-          revealNumber();
-          setLoadingAd(false);
-        }
       } catch (error) {
         console.log("Failed to show rewarded ad:", error);
+        setLoadingAd(false);
+        setIsAd(false)
+      }
+      finally {
         setLoadingAd(false);
       }
     }
   };
 
+  useEffect(() => {
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
 
+      let adDismissListener, adRewardListener;
+
+      const addAdListeners = async () => {
+        adDismissListener = await AdMob.addListener(RewardAdPluginEvents.Dismissed, () => {
+          setIsAd(false);
+        });
+
+        adRewardListener = await AdMob.addListener(RewardAdPluginEvents.Rewarded, () => {
+          revealNumber();
+        });
+      };
+
+      addAdListeners();
+
+      return () => {
+        if (adDismissListener) {
+          adDismissListener.remove();
+        }
+        if (adRewardListener) {
+          adRewardListener.remove();
+        }
+      };
+    }
+  }, [setIsAd, revealNumber]);
 
   return (
     <div className="flex flex-col space-y-2">

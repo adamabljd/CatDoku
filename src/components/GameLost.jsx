@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import houseLogo from '../assets/icons/house.svg';
 import videoLogo from '../assets/icons/video.svg';
-import { AdMob } from '@capacitor-community/admob';
+import { AdMob, RewardAdPluginEvents } from '@capacitor-community/admob';
 import pokiService from '../pokiService';
 
-const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd }) => {
+const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd }) => {
     const navigate = useNavigate();
 
     const handleReturnToMenu = () => {
@@ -14,6 +14,7 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd }) => {
 
     const handleExtraMistakeClick = async () => {
         try {
+            setIsAd(true)
             setLoadingAd(true);
             let result = null
             switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
@@ -33,28 +34,50 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd }) => {
 
                 case 'poki':
                     result = await pokiService.showRewardedAd();
-                    setLoadingAd(false);
                     break;
 
                 default:
                     console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
-                    result = undefined
                     break;
             };
-
-            if (result) {
-                setMistakes((prevMistakes) => prevMistakes - 1);
-                setGameOver(false)
-                setLoadingAd(false);
-            }
         } catch (error) {
             console.log("Failed to show rewarded ad:", error);
             setLoadingAd(false);
+        } finally {
+            setLoadingAd(false);
         }
-
     };
+
+    useEffect(() => {
+        if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+            let adDismissListener, adRewardListener;
+
+            const addAdListeners = async () => {
+                adDismissListener = await AdMob.addListener(RewardAdPluginEvents.Dismissed, () => {
+                    setIsAd(false);
+                });
+
+                adRewardListener = await AdMob.addListener(RewardAdPluginEvents.Rewarded, () => {
+                    setMistakes((prevMistakes) => prevMistakes - 1);
+                    setGameOver(false)
+                });
+            };
+
+            addAdListeners();
+
+            return () => {
+                if (adDismissListener) {
+                    adDismissListener.remove();
+                }
+                if (adRewardListener) {
+                    adRewardListener.remove();
+                }
+            };
+        }
+    }, [setIsAd, setMistakes, setGameOver]);
+
     return (
-        <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-60 bg-black z-50">
+        <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-60 bg-black z-40">
             <div className="text-center p-6 mx-2 bg-white rounded-lg shadow-lg max-w-full">
                 <h2 className="text-4xl font-bold text-red-600 mb-4">Game Over!</h2>
                 <p className="text-xl text-gray-700 mb-6">You've made <span className='font-bold text-red-600'>{mistakes}</span> mistakes!</p>

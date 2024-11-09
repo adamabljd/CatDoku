@@ -33,9 +33,9 @@ const SettingsDropdown = ({ soundEnabled, setSoundEnabled, vibrationEnabled, set
                  <img src={settingsIcon} alt='settings' className='w-7 h-7 mt-1'/>
             </button>
             {isDropdownOpen && (
-                <div className="absolute md:left-1/2 transform -translate-x-1/2 w-12 mt-1 bg-white rounded-md shadow-lg">
-                    <div className="p-2">
-                        <div className="flex justify-between items-center mb-2">
+                <div className="absolute left-0 transform -translate-x-20 -translate-y-10 w-20  mt-1 bg-white rounded-md shadow-lg">
+                    <div className="p-2 flex flex-row space-x-2">
+                        <div className="flex justify-between items-center">
                             <button
                                 onClick={toggleSound}
                                 className={`p-1 rounded-md ${soundEnabled ? 'bg-green-400' : 'bg-red-400'}`}

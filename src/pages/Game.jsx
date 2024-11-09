@@ -11,7 +11,7 @@ import GameLost from "../components/GameLost";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import correctSound from '../assets/sounds/correct_cell_sound.mp3';
 import html2canvas from "html2canvas";
-import { AdMob, BannerAdPosition, BannerAdSize } from "@capacitor-community/admob";
+import { AdMob, BannerAdPosition, BannerAdSize, InterstitialAdPluginEvents } from "@capacitor-community/admob";
 
 const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
@@ -53,10 +53,67 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const [totalWins, setTotalWins] = useState(0);
   const [freeHintUsed, setFreeHintUsed] = useState(false);
   const [loadingAd, setLoadingAd] = useState(false);
+  const [isAd, setIsAd] = useState(false);
 
   const [imageURL, setImageURL] = useState(null); // State to store the image URL
   const gridRef = useRef(null);
 
+  const showTimedAd = async () => {
+    if (isAd) return;
+    setLoadingAd(true);
+    setIsAd(true)
+    try {
+      switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+        case 'android':
+          await AdMob.prepareInterstitial({
+            adId: 'ca-app-pub-3940256099942544/1033173712',
+          });
+          await AdMob.showInterstitial();
+          console.warn("Noddddddddddddd.");
+          break;
+
+        case 'ios':
+          await AdMob.prepareInterstitial({
+            adId: 'ca-app-pub-3940256099942544/4411468910',
+          });
+          await AdMob.showInterstitial();
+          break;
+
+        default:
+          console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+          break;
+      }
+    } catch (error) {
+      console.error("Failed to load interstitial ad:", error);
+    } finally {
+      setLoadingAd(false);
+    }
+  };
+
+  useEffect(() => {
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+      let adDismissListener;
+
+      // Add the listener and store the handle for cleanup
+      const addAdDismissListener = async () => {
+        adDismissListener = await AdMob.addListener(
+          InterstitialAdPluginEvents.Dismissed,
+          () => {
+            setIsAd(false);
+          }
+        );
+      };
+
+      addAdDismissListener();
+
+      // Cleanup listener on component unmount
+      return () => {
+        if (adDismissListener) {
+          adDismissListener.remove(); // Properly remove listener
+        }
+      };
+    }
+  }, [setIsAd]);
 
   const captureGridAsImage = async () => {
     if (gridRef.current) {
@@ -295,13 +352,19 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   // Function to start the timer
   useEffect(() => {
     let interval;
-    if (isRunning && !gameOver && !gameWon && !isPaused) {
+    if (isRunning && !gameOver && !gameWon && !isPaused && !isAd) {
       interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer + 1);
+        setTimer((prevTimer) => {
+          const newTimer = prevTimer + 1;
+          if (newTimer % 15 === 0) {
+            showTimedAd();
+          }
+          return newTimer;
+        });
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isRunning, gameOver, gameWon, isPaused]);
+  }, [isRunning, gameOver, gameWon, isPaused, isAd]);
 
   // Function to format the timer into mm:ss
   const formatTime = (time) => {
@@ -747,7 +810,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       )}
       {/* Render based on explicit checks */}
       {isLoaded && gameOver && !gameWon ? (
-        <GameLost mistakes={mistakes} setMistakes={setMistakes} setGameOver={setGameOver} setLoadingAd={setLoadingAd} />
+        <GameLost mistakes={mistakes} setMistakes={setMistakes} setGameOver={setGameOver} setLoadingAd={setLoadingAd} setIsAd={setIsAd} />
       ) : isLoaded && gameWon && !gameOver ? (
         <GameWon imageURL={imageURL} bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} soundEnabled={soundEnabled} />
 
@@ -801,6 +864,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                 freeHintUsed={freeHintUsed}
                 setFreeHintUsed={setFreeHintUsed}
                 setLoadingAd={setLoadingAd}
+                setIsAd={setIsAd}
               />
             </div>
 
