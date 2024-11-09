@@ -16,7 +16,7 @@ import { AdMob, BannerAdPosition, BannerAdSize } from "@capacitor-community/admo
 const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
+
   const mistakesAllowedParam = searchParams.get("mistakesAllowed");
   const mistakesAllowed = mistakesAllowedParam === "Infinity" || mistakesAllowedParam === "Unlimited"
     ? Infinity
@@ -52,7 +52,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const [bestTime, setBestTime] = useState(null);
   const [totalWins, setTotalWins] = useState(0);
   const [freeHintUsed, setFreeHintUsed] = useState(false);
-  const [loadingAd, setLoadingAd] = useState(false); 
+  const [loadingAd, setLoadingAd] = useState(false);
 
   const [imageURL, setImageURL] = useState(null); // State to store the image URL
   const gridRef = useRef(null);
@@ -66,13 +66,13 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         backgroundColor: null,
       });
       const highResCanvas = document.createElement("canvas");
-    highResCanvas.width = canvas.width;
-    highResCanvas.height = canvas.height;
-    const ctx = highResCanvas.getContext("2d");
-    ctx.drawImage(canvas, 0, 0);
+      highResCanvas.width = canvas.width;
+      highResCanvas.height = canvas.height;
+      const ctx = highResCanvas.getContext("2d");
+      ctx.drawImage(canvas, 0, 0);
 
-    // Convert to data URL at maximum quality for PNG, or specify quality if using JPEG
-    const image = highResCanvas.toDataURL("image/png", 1.0);
+      // Convert to data URL at maximum quality for PNG, or specify quality if using JPEG
+      const image = highResCanvas.toDataURL("image/png", 1.0);
       setImageURL(image);
     }
   };
@@ -191,19 +191,83 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   useEffect(() => {
     if (isLoaded) {
       const saveGameState = async () => {
-        await Storage.set({ key: 'grid', value: JSON.stringify(grid) });
-        await Storage.set({ key: 'initialGrid', value: JSON.stringify(initialGrid) });
-        await Storage.set({ key: 'solutionGrid', value: JSON.stringify(solutionGrid) });
-        await Storage.set({ key: 'difficulty', value: difficulty });
-        await Storage.set({ key: 'maxMistakes', value: JSON.stringify(maxMistakes) });
-        await Storage.set({ key: 'gameWon', value: JSON.stringify(gameWon) });
-        await Storage.set({ key: 'mistakes', value: JSON.stringify(mistakes) });
-        await Storage.set({ key: 'gameOver', value: JSON.stringify(gameOver) });
-        await Storage.set({ key: 'timer', value: JSON.stringify(timer) });
-        await Storage.set({ key: 'mistakenCells', value: JSON.stringify(mistakenCells) });
-        await Storage.set({ key: 'correctCells', value: JSON.stringify(correctCells) });
-        await Storage.set({ key: 'notesGrid', value: JSON.stringify(notesGrid) });
-        await Storage.set({ key: 'freeHintUsed', value: JSON.stringify(freeHintUsed) });
+        try {
+          await Storage.set({ key: 'grid', value: JSON.stringify(grid) });
+        } catch (error) {
+          console.error("Failed to save 'grid' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'initialGrid', value: JSON.stringify(initialGrid) });
+        } catch (error) {
+          console.error("Failed to save 'initialGrid' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'solutionGrid', value: JSON.stringify(solutionGrid) });
+        } catch (error) {
+          console.error("Failed to save 'solutionGrid' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'difficulty', value: difficulty });
+        } catch (error) {
+          console.error("Failed to save 'difficulty' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'maxMistakes', value: JSON.stringify(maxMistakes) });
+        } catch (error) {
+          console.error("Failed to save 'maxMistakes' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'gameWon', value: JSON.stringify(gameWon) });
+        } catch (error) {
+          console.error("Failed to save 'gameWon' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'mistakes', value: JSON.stringify(mistakes) });
+        } catch (error) {
+          console.error("Failed to save 'mistakes' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'gameOver', value: JSON.stringify(gameOver) });
+        } catch (error) {
+          console.error("Failed to save 'gameOver' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'timer', value: JSON.stringify(timer) });
+        } catch (error) {
+          console.error("Failed to save 'timer' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'mistakenCells', value: JSON.stringify(mistakenCells) });
+        } catch (error) {
+          console.error("Failed to save 'mistakenCells' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'correctCells', value: JSON.stringify(correctCells) });
+        } catch (error) {
+          console.error("Failed to save 'correctCells' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'notesGrid', value: JSON.stringify(notesGrid) });
+        } catch (error) {
+          console.error("Failed to save 'notesGrid' to storage:", error);
+        }
+
+        try {
+          await Storage.set({ key: 'freeHintUsed', value: JSON.stringify(freeHintUsed) });
+        } catch (error) {
+          console.error("Failed to save 'freeHintUsed' to storage:", error);
+        }
       };
       saveGameState();
     }
@@ -400,8 +464,12 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     const bestTime = bestTimeData.value ? JSON.parse(bestTimeData.value) : Infinity;
 
     if (timer < bestTime) {
-      await Storage.set({ key, value: JSON.stringify(timer) });
-      setBestTime(timer)
+      try {
+        await Storage.set({ key, value: JSON.stringify(timer) });
+        setBestTime(timer)
+      } catch (error) {
+        console.error("Failed to save 'grid' to storage:", error);
+      }
     }
   };
 
@@ -412,7 +480,12 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     const winCount = winData.value ? JSON.parse(winData.value) : 0;
 
     setTotalWins(winCount + 1)
-    await Storage.set({ key, value: JSON.stringify(winCount + 1) });
+    try {
+      await Storage.set({ key, value: JSON.stringify(winCount + 1) });
+    } catch (error) {
+      console.error("Failed to save 'grid' to storage:", error);
+    }
+
   };
 
   //------------------------------ GAME'S CORE MECANICS ----------------------------------------------
@@ -642,11 +715,6 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         });
         break;
 
-      case 'poki':
-        console.log("Poki ads will be implemented here.");
-        // Implement Poki ad logic here when ready
-        break;
-
       default:
         console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
         break;
@@ -664,7 +732,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       };
     }
   }, []);
-  
+
 
   if (!isLoaded) {
     return <div>Loading game data...</div>;
@@ -686,7 +754,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       ) : (
         (
           <>
-            <div 
+            <div
               className={`relative z-10 transition-all duration-500 ease-out ${animateGameBar ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
                 }`}
             >
@@ -705,8 +773,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
               />
             </div>
             <div
-            ref={gridRef} className={`flex items-center justify-center transition-all duration-500 ease-out ${animateGrid ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-              }`}>
+              ref={gridRef} className={`flex items-center justify-center transition-all duration-500 ease-out ${animateGrid ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+                }`}>
               <Grid
                 grid={grid}
                 notesGrid={notesGrid}

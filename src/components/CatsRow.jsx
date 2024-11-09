@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import cat1 from "../assets/cats/Catdoku 1.png"
 import cat2 from "../assets/cats/Catdoku 2.png"
 import cat3 from "../assets/cats/Catdoku 3.png"
@@ -13,6 +13,7 @@ import penLogo from "../assets/icons/pen.svg"
 import hintLogo from "../assets/icons/lightbulb.svg"
 import videoLogo from "../assets/icons/video.svg"
 import { AdMob } from "@capacitor-community/admob";
+import pokiService from "../pokiService";
 
 const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed, setLoadingAd }) => {
   const cats = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
@@ -36,7 +37,6 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
               adId: 'ca-app-pub-3940256099942544/5224354917',
             });
             result = await AdMob.showRewardVideoAd();
-            setLoadingAd(false);
             break;
 
           case 'ios':
@@ -44,20 +44,21 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
               adId: '',
             });
             result = await AdMob.showRewardVideoAd();
-            setLoadingAd(false);
             break;
 
           case 'poki':
-            console.log("Poki ads will be implemented here.");
+            result = await pokiService.showRewardedAd();
             break;
 
           default:
             console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+            setLoadingAd(false);
             break;
         };
 
         if (result) {
           revealNumber();
+          setLoadingAd(false);
         }
       } catch (error) {
         console.log("Failed to show rewarded ad:", error);

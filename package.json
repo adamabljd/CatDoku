@@ -2,6 +2,7 @@
   "name": "cat-sudoku",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@capacitor-community/admob": "^6.0.0",
     "@capacitor/android": "^6.1.2",
