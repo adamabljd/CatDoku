@@ -55,13 +55,12 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const [loadingAd, setLoadingAd] = useState(false);
   const [isAd, setIsAd] = useState(false);
 
-  const [imageURL, setImageURL] = useState(null); // State to store the image URL
+  const [imageURL, setImageURL] = useState(null);
   const gridRef = useRef(null);
   const TimerAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
   const RestartGameAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
   const ResumeGameAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
   const rePlayAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
-
 
   const showAd = async (id) => {
     if (isAd) return;
@@ -384,7 +383,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       interval = setInterval(() => {
         setTimer((prevTimer) => {
           const newTimer = prevTimer + 1;
-          if (newTimer % 15 === 0) {
+          if (newTimer % 420 === 0) {
             switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
               case "android":
                 showAd(TimerAdId.android);

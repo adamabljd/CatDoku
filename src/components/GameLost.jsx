@@ -2,14 +2,46 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import houseLogo from '../assets/icons/house.svg';
 import videoLogo from '../assets/icons/video.svg';
-import { AdMob, RewardAdPluginEvents } from '@capacitor-community/admob';
+import { AdMob, InterstitialAdPluginEvents, RewardAdPluginEvents } from '@capacitor-community/admob';
 import pokiService from '../pokiService';
 
 const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd }) => {
     const navigate = useNavigate();
 
-    const handleReturnToMenu = () => {
-        navigate("/");
+    const handleReturnToMenu = async () => {
+        try {
+            let adShown = false;
+            switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+                case 'android':
+                    await AdMob.prepareInterstitial({ adId: 'ca-app-pub-3940256099942544/1033173712' });
+                    await AdMob.showInterstitial();
+                    adShown = true;
+                    break;
+                case 'ios':
+                    await AdMob.prepareInterstitial({ adId: 'ca-app-pub-3940256099942544/4411468910' });
+                    await AdMob.showInterstitial();
+                    adShown = true;
+                    break;
+                default:
+                    console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+                    break;
+            }
+
+            if (adShown) {
+                const adDismissListener = await AdMob.addListener(
+                    InterstitialAdPluginEvents.Dismissed,
+                    () => {
+                        navigate("/");
+                        adDismissListener.remove();
+                    }
+                );
+            } else {
+                navigate("/");
+            }
+        } catch (error) {
+            console.log("Error showing interstitial ad:", error);
+            navigate("/");
+        }
     };
 
     const handleExtraMistakeClick = async () => {
