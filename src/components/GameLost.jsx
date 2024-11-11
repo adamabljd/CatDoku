@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import houseLogo from '../assets/icons/house.svg';
 import videoLogo from '../assets/icons/video.svg';
@@ -7,6 +7,12 @@ import pokiService from '../pokiService';
 
 const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd }) => {
     const navigate = useNavigate();
+
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [tooltipMessage, setTooltipMessage] = useState("");
+    const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+    const tooltipTimeoutRef = useRef(null);
+    const extraMistakeButtonRef = useRef(null);
 
     const handleReturnToMenu = async () => {
         try {
@@ -44,7 +50,7 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
         }
     };
 
-    const handleExtraMistakeClick = async () => {
+    const handleExtraMistakeClick = async (event) => {
         try {
             setIsAd(true)
             setLoadingAd(true);
@@ -63,17 +69,24 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                     await AdMob.showRewardVideoAd();
                     break;
 
-                case 'poki':
-                    await pokiService.showRewardedAd();
-                    break;
-
                 default:
-                    console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+                    setTooltipMessage("Extra Mistake feature only available on iOS and Android");
+                    setTooltipPosition({ top: event.clientY - 50, left: event.clientX - 30 });
+                    setShowTooltip(true);
+
+                    if (tooltipTimeoutRef.current) {
+                        clearTimeout(tooltipTimeoutRef.current);
+                    }
+
+                    tooltipTimeoutRef.current = setTimeout(() => setShowTooltip(false), 5000);
+                    setLoadingAd(false);
+                    setIsAd(false);
                     break;
             };
         } catch (error) {
             console.log("Failed to show rewarded ad:", error);
             setLoadingAd(false);
+            setIsAd(false);
         } finally {
             setLoadingAd(false);
         }
@@ -105,7 +118,19 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                 }
             };
         }
+        return () => clearTimeout(tooltipTimeoutRef.current);
     }, [setIsAd, setMistakes, setGameOver]);
+
+    useEffect(() => {
+        const handleDocumentClick = (event) => {
+            if (showTooltip && !extraMistakeButtonRef.current.contains(event.target)) {
+                setShowTooltip(false);
+            }
+        };
+
+        document.addEventListener("click", handleDocumentClick);
+        return () => document.removeEventListener("click", handleDocumentClick);
+    }, [showTooltip]);
 
     return (
         <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-60 bg-black z-40">
@@ -114,11 +139,17 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                 <p className="text-xl text-gray-700 mb-6">You've made <span className='font-bold text-red-600'>{mistakes}</span> mistakes!</p>
                 <div className="flex items-center justify-center mt-4 mb-5">
                     <button
+                        ref={extraMistakeButtonRef}
                         className="bg-blue-500 shadow-md text-white text-lg rounded-md w-fit p-4 flex items-center justify-center font-bold"
                         onClick={handleExtraMistakeClick}
                     >
                         Extra Mistake? <img src={videoLogo} alt="adlogo" className="ms-3 h-6 w-6 shadow-sm" />
                     </button>
+                    {showTooltip && (
+                        <div style={{ position: 'absolute', top: tooltipPosition.top, left: tooltipPosition.left }} className="bg-black text-white text-sm rounded-md p-2 shadow-lg z-50">
+                            {tooltipMessage}
+                        </div>
+                    )}
                 </div>
                 <div className="flex items-center justify-center mt-4 mb-5">
                     <button

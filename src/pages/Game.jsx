@@ -177,7 +177,6 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
     const bestTimeData = await Storage.get({ key: bestTimeKey });
     const totalWinsData = await Storage.get({ key: totalWinsKey });
-    console.log(bestTimeData)
 
     setBestTime(bestTimeData.value ? parseInt(bestTimeData.value) : null);
     setTotalWins(totalWinsData.value ? parseInt(totalWinsData.value) : 0);
@@ -574,7 +573,6 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     const bestTime = bestTimeData.value && bestTimeData.value !== "0" 
       ? parseInt(bestTimeData.value, 10)
       : Infinity;
-    console.log(bestTime + " btime")
 
     if (timer < bestTime) {
       try {

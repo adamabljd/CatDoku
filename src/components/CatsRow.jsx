@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import cat1 from "../assets/cats/Catdoku 1.png"
 import cat2 from "../assets/cats/Catdoku 2.png"
 import cat3 from "../assets/cats/Catdoku 3.png"
@@ -18,18 +18,23 @@ import pokiService from "../pokiService";
 const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed, setLoadingAd, setIsAd }) => {
   const cats = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
 
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipMessage, setTooltipMessage] = useState("");
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const tooltipTimeoutRef = useRef(null);
+  const hintButtonRef = useRef(null);
+
   const handleCatClick = (event, index) => {
     event.stopPropagation();
     onNumberClick(index + 1);
   };
 
-  const handleHintClick = async () => {
+  const handleHintClick = async (event) => {
     if (!freeHintUsed) {
       setFreeHintUsed(true);
       revealNumber();
     } else {
       try {
-        console.log(process.env.REACT_APP_ACTIVE_SYSTEM)
         setIsAd(true)
         setLoadingAd(true);
         switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
@@ -47,18 +52,19 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
             await AdMob.showRewardVideoAd();
             break;
 
-          case 'poki':
-            await pokiService.showRewardedAd();
-            break;
-
-          case 'itch.io':
-            setLoadingAd(false);
-            setIsAd(false);
-            // revealNumber()
-            break;
-
           default:
-            console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+            setTooltipMessage("Hint feature only available on iOS and Android");
+            setTooltipPosition({ top: event.clientY - 50, left: event.clientX - 30 });
+            setShowTooltip(true);
+
+
+            // Clear previous tooltip timeout if it exists
+            if (tooltipTimeoutRef.current) {
+              clearTimeout(tooltipTimeoutRef.current);
+            }
+
+            // Hide tooltip after 5 seconds
+            tooltipTimeoutRef.current = setTimeout(() => setShowTooltip(false), 5000);
             setLoadingAd(false);
             setIsAd(false);
             break;
@@ -101,7 +107,19 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
         }
       };
     }
+    return () => clearTimeout(tooltipTimeoutRef.current);
   }, [setIsAd, revealNumber]);
+
+  useEffect(() => {
+    const handleDocumentClick = (event) => {
+      if (showTooltip && !hintButtonRef.current.contains(event.target)) {
+        setShowTooltip(false);
+      }
+    };
+
+    document.addEventListener("click", handleDocumentClick);
+    return () => document.removeEventListener("click", handleDocumentClick);
+  }, [showTooltip]);
 
   return (
     <div className="flex flex-col space-y-2">
@@ -138,8 +156,9 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
 
         <div className="relative">
           <button
+            ref={hintButtonRef}
             className="bg-yellow-400 text-white p-1 shadow-md rounded relative"
-            onClick={handleHintClick}
+            onClick={(event) => handleHintClick(event)}
             disabled={isPaused}
           >
             <img src={hintLogo} alt="hint" className="h-7 w-7" />
@@ -156,6 +175,11 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
           </div>
         </div>
       </div>
+      {showTooltip && (
+        <div style={{ position: 'absolute', top: -40, left: tooltipPosition.left }} className="bg-black text-white text-sm rounded-md p-2 shadow-lg z-50">
+          {tooltipMessage}
+        </div>
+      )}
     </div>
   );
 };

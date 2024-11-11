@@ -142,16 +142,16 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
       let unlockMessage = "";
       switch (value) {
         case "Medium":
-          unlockMessage = "Win 5 games to unlock Medium level.";
+          unlockMessage = "Win 5 Easy games with 3 Mistakes Allowed to unlock Medium level.";
           break;
         case "Hard":
-          unlockMessage = "Win 3 Medium games to unlock Hard level.";
+          unlockMessage = "Win 3 Medium games with 3 Mistakes Allowed to unlock Hard level.";
           break;
         case "Expert":
-          unlockMessage = "Win 2 Hard games to unlock Expert level.";
+          unlockMessage = "Win 2 Hard games with 3 Mistakes Allowed to unlock Expert level.";
           break;
         case "Master":
-          unlockMessage = "Win 1 Expert game to unlock Master level.";
+          unlockMessage = "Win 1 Expert game with 3 Mistakes Allowed to unlock Master level.";
           break;
         default:
           unlockMessage = "Level locked. Complete prerequisites to unlock.";
