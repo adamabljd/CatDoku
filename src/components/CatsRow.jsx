@@ -29,6 +29,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
       revealNumber();
     } else {
       try {
+        console.log(process.env.REACT_APP_ACTIVE_SYSTEM)
         setIsAd(true)
         setLoadingAd(true);
         switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
@@ -48,6 +49,12 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
 
           case 'poki':
             await pokiService.showRewardedAd();
+            break;
+
+          case 'itch.io':
+            setLoadingAd(false);
+            setIsAd(false);
+            // revealNumber()
             break;
 
           default:

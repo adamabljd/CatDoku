@@ -21,7 +21,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const mistakesAllowed = mistakesAllowedParam === "Infinity" || mistakesAllowedParam === "Unlimited"
     ? Infinity
     : parseInt(mistakesAllowedParam) || 3;
-  const initialDifficulty = searchParams.get("difficulty") || "Medium";
+  const initialDifficulty = searchParams.get("difficulty") || "Easy";
   const isResuming = searchParams.get("isResuming") === "true";
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -177,9 +177,10 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
     const bestTimeData = await Storage.get({ key: bestTimeKey });
     const totalWinsData = await Storage.get({ key: totalWinsKey });
+    console.log(bestTimeData)
 
-    setBestTime(bestTimeData.value ? JSON.parse(bestTimeData.value) : null);
-    setTotalWins(totalWinsData.value ? JSON.parse(totalWinsData.value) : 0);
+    setBestTime(bestTimeData.value ? parseInt(bestTimeData.value) : null);
+    setTotalWins(totalWinsData.value ? parseInt(totalWinsData.value) : 0);
   };
 
   const loadSavedState = async (key, defaultValue) => {
@@ -570,7 +571,10 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const checkAndSetBestTime = async () => {
     const key = `bestTime_${difficulty}_${maxMistakes}`;
     const bestTimeData = await Storage.get({ key });
-    const bestTime = bestTimeData.value ? JSON.parse(bestTimeData.value) : Infinity;
+    const bestTime = bestTimeData.value && bestTimeData.value !== "0" 
+      ? parseInt(bestTimeData.value, 10)
+      : Infinity;
+    console.log(bestTime + " btime")
 
     if (timer < bestTime) {
       try {
@@ -639,18 +643,28 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         fillChance = 0.8;
         break;
       case "Medium":
-        maxFilledCells = 6;
-        minFilledCells = 3;
+        maxFilledCells = 7;
+        minFilledCells = 4;
         fillChance = 0.8;
         break;
       case "Hard":
+        maxFilledCells = 6;
+        minFilledCells = 3;
+        fillChance = 0.6;
+        break;
+      case "Expert":
         maxFilledCells = 5;
         minFilledCells = 2;
-        fillChance = 0.5;
+        fillChance = 0.4;
+        break;
+      case "Master":
+        maxFilledCells = 4;
+        minFilledCells = 1;
+        fillChance = 0.3;
         break;
       default:
-        maxFilledCells = 6;
-        minFilledCells = 2;
+        maxFilledCells = 8;
+        minFilledCells = 4;
         fillChance = 0.6;
         break;
     }
