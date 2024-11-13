@@ -12,10 +12,12 @@ import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import correctSound from '../assets/sounds/correct_cell_sound.mp3';
 import html2canvas from "html2canvas";
 import { AdMob, BannerAdPosition, BannerAdSize, InterstitialAdPluginEvents } from "@capacitor-community/admob";
+import LoadingScreen from "./LoadingScreen";
 
 const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [hideControls, setHideControls] = useState(false);
 
   const mistakesAllowedParam = searchParams.get("mistakesAllowed");
   const mistakesAllowed = mistakesAllowedParam === "Infinity" || mistakesAllowedParam === "Unlimited"
@@ -137,14 +139,14 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         useCORS: true,
         backgroundColor: null,
       });
-      const highResCanvas = document.createElement("canvas");
-      highResCanvas.width = canvas.width;
-      highResCanvas.height = canvas.height;
-      const ctx = highResCanvas.getContext("2d");
-      ctx.drawImage(canvas, 0, 0);
+      // const highResCanvas = document.createElement("canvas");
+      // highResCanvas.width = canvas.width;
+      // highResCanvas.height = canvas.height;
+      // const ctx = highResCanvas.getContext("2d");
+      // ctx.drawImage(canvas, 0, 0);
 
       // Convert to data URL at maximum quality for PNG, or specify quality if using JPEG
-      const image = highResCanvas.toDataURL("image/png", 1.0);
+      const image = canvas.toDataURL("image/png", 1.0);
       setImageURL(image);
     }
   };
@@ -556,6 +558,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       }
     }
 
+    setHideControls(true);
+
     // If all checks pass, set game won to true
     setTimeout(async () => {
       await captureGridAsImage();
@@ -570,7 +574,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const checkAndSetBestTime = async () => {
     const key = `bestTime_${difficulty}_${maxMistakes}`;
     const bestTimeData = await Storage.get({ key });
-    const bestTime = bestTimeData.value && bestTimeData.value !== "0" 
+    const bestTime = bestTimeData.value && bestTimeData.value !== "0"
       ? parseInt(bestTimeData.value, 10)
       : Infinity;
 
@@ -757,6 +761,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       setCorrectCells((prev) =>
         prev.filter((cell) => !(cell.row === row && cell.col === col))
       );
+      setSelectedCell(null);
       setMistakenCells((prev) => [...prev, { row, col }]);
       triggerVibration();
       if (mistakes + 1 >= maxMistakes) {
@@ -858,14 +863,14 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
 
   if (!isLoaded) {
-    return <div>Loading game data...</div>;
+    return <LoadingScreen />;
   }
 
   return (
     <div className="space-y-5 mt-5 landscape:pb-32">
-      {loadingAd && ( // Show full-page overlay when loading an ad
+      {loadingAd && (
         <div className="fixed inset-0 z-50 bg-beige flex justify-center items-center">
-          <span>Loading ad...</span>
+          <LoadingScreen />
         </div>
       )}
       {/* Render based on explicit checks */}
@@ -877,24 +882,26 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       ) : (
         (
           <>
-            <div
-              className={`relative z-10 transition-all duration-500 ease-out ${animateGameBar ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
-                }`}
-            >
-              <GameBar
-                difficulty={difficulty}
-                mistakes={mistakes}
-                timer={formatTime(timer)}
-                isPaused={isPaused}
-                onPauseToggle={togglePause}
-                onRestart={onRestart}
-                mistakesAllowed={maxMistakes}
-                soundEnabled={soundEnabled}
-                setSoundEnabled={setSoundEnabled}
-                vibrationEnabled={vibrationEnabled}
-                setVibrationEnabled={setVibrationEnabled}
-              />
-            </div>
+            {!hideControls && (
+              <div
+                className={`relative z-10 transition-all duration-500 ease-out ${animateGameBar ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+                  }`}
+              >
+                <GameBar
+                  difficulty={difficulty}
+                  mistakes={mistakes}
+                  timer={formatTime(timer)}
+                  isPaused={isPaused}
+                  onPauseToggle={togglePause}
+                  onRestart={onRestart}
+                  mistakesAllowed={maxMistakes}
+                  soundEnabled={soundEnabled}
+                  setSoundEnabled={setSoundEnabled}
+                  vibrationEnabled={vibrationEnabled}
+                  setVibrationEnabled={setVibrationEnabled}
+                />
+              </div>
+            )}
             <div
               ref={gridRef} className={`flex items-center justify-center transition-all duration-500 ease-out ${animateGrid ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
                 }`}>
@@ -910,35 +917,38 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                 highlightedNumber={highlightedNumber}
               />
             </div>
-            <div
-              className={`transition-all duration-500 ease-out ${animateCatsRow ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
-                }`}
-            >
-              <CatsRow
-                onNumberClick={handleNumberClick}
-                isSelected={isSelected}
-                onEraseClick={handleEraseClick}
-                isNotesMode={isNotesMode}
-                toggleNotesMode={toggleNotesMode}
-                revealNumber={revealNumber}
-                freeHintUsed={freeHintUsed}
-                setFreeHintUsed={setFreeHintUsed}
-                setLoadingAd={setLoadingAd}
-                setIsAd={setIsAd}
-              />
-            </div>
-
-            <div
-              className={`flex items-center justify-center mt-4 mb-5 transition-opacity duration-500 ease-out ${animateButton ? "opacity-100" : "opacity-0"
-                }`}
-            >
-              <button
-                className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
-                onClick={handleReturnToMenu}
+            {!hideControls && (
+              <div
+                className={`transition-all duration-500 ease-out ${animateCatsRow ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+                  }`}
               >
-                <img src={houseLogo} alt="house" className="h-7 w-7" />
-              </button>
-            </div>
+                <CatsRow
+                  onNumberClick={handleNumberClick}
+                  isSelected={isSelected}
+                  onEraseClick={handleEraseClick}
+                  isNotesMode={isNotesMode}
+                  toggleNotesMode={toggleNotesMode}
+                  revealNumber={revealNumber}
+                  freeHintUsed={freeHintUsed}
+                  setFreeHintUsed={setFreeHintUsed}
+                  setLoadingAd={setLoadingAd}
+                  setIsAd={setIsAd}
+                />
+              </div>
+            )}
+            {!hideControls && (
+              <div
+                className={`flex items-center justify-center mt-4 mb-5 transition-opacity duration-500 ease-out ${animateButton ? "opacity-100" : "opacity-0"
+                  }`}
+              >
+                <button
+                  className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
+                  onClick={handleReturnToMenu}
+                >
+                  <img src={houseLogo} alt="house" className="h-7 w-7" />
+                </button>
+              </div>
+            )}
           </>
         )
       )}

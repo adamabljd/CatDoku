@@ -8,7 +8,7 @@ import SettingsDropdown from "../components/SettingsDropdown";
 const GameBar = ({ difficulty, mistakes, timer, isPaused, onPauseToggle, onRestart, mistakesAllowed, soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
 
     return (
-        <div className="flex flex-row justify-between items-center px-1">
+        <div className="flex flex-row justify-between items-center px-1 font-coffee">
             <p>{difficulty}</p>
             {mistakesAllowed < 10 && <div className="flex flex-row items-center"><img src={deadCatIcon} alt="deadCat" className="w-8 h-8 aspect-square me-1" /> {mistakes}/{mistakesAllowed}</div>}
             <div>{timer}</div>

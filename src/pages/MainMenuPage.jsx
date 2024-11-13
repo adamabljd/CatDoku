@@ -46,11 +46,6 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
         });
         break;
 
-      case 'poki':
-        console.log("Poki ads will be implemented here.");
-        // Implement Poki ad logic here when ready
-        break;
-
       default:
         console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
         break;
@@ -186,19 +181,19 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
 
 
   return (
-    <div className="flex flex-col pb-10 landscape:pb-20">
+    <div className="flex flex-col pb-10 landscape:pb-20 font-coffee">
       <div className="flex flex-col items-center mt-20 mb-10 landscape:mt-10">
         <img src={logo} alt="logo" className="w-56 aspect-square shadow rounded-[1.25rem]" />
-        <h1 className="text-4xl font-bold text-center mt-3">MiawDoku!</h1>
+        <h1 className="text-4xl text-center mt-3">MiawDoku!</h1>
       </div>
 
       <div className="flex-grow flex flex-col items-center justify-center space-y-4 mb-10">
         <div className="flex items-center space-x-2">
-          <label className="text-md font-semibold">Mistakes :</label>
+          <label className="text-md">Mistakes :</label>
           <div className="relative inline-block text-left">
             <button
               onClick={() => setIsMistakesOpen(!isMistakesOpen)}
-              className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
               {mistakesAllowed === Infinity ? "Unlimited" : mistakesAllowed}
               <ChevronDownIcon aria-hidden="true" className="-mr-1 h-5 w-5 text-gray-400" />
@@ -229,11 +224,11 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
         </div>
 
         <div className="flex items-center space-x-2">
-          <label className="text-md font-semibold">Difficulty :</label>
+          <label className="text-md">Difficulty :</label>
           <div ref={dropdownRef} className="relative inline-block text-left">
             <button
               onClick={() => setIsDifficultyOpen(!isDifficultyOpen)}
-              className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
               {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
               <ChevronDownIcon aria-hidden="true" className="-mr-1 h-5 w-5 text-gray-400" />
@@ -264,7 +259,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
         </div>
 
         <button
-          className="bg-red-800 text-white px-4 py-2 rounded-lg text-lg font-semibold"
+          className="bg-red-800 text-white px-4 py-2 rounded-lg text-lg"
           onClick={handleStartGame}
         >
           Start New Game
@@ -272,7 +267,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
 
         {hasSavedGame && (
           <button
-            className="bg-orange-600 text-white px-4 py-2 rounded-lg text-lg font-semibold"
+            className="bg-orange-600 text-white px-4 py-2 rounded-lg text-lg text-center"
             onClick={handleResumeGame}
           >
             Resume Last Game

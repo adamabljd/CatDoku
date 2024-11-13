@@ -6,7 +6,7 @@ import houseLogo from '../assets/icons/house.svg';
 import LeaderboardTable from '../components/LeaderboardTable';
 import { AdMob, BannerAdPosition, BannerAdSize } from '@capacitor-community/admob';
 
-const difficulties = ["Easy", "Medium", "Hard"];
+const difficulties = ["Easy", "Medium", "Hard", "Expert", "Master"];
 const mistakesOptions = [1, 2, 3, 4, 5, Infinity];
 
 const BestTimesPage = () => {
@@ -94,8 +94,8 @@ const BestTimesPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen pb-20 landscape:pb-32">
-      <h2 className="text-2xl font-bold mb-3 mt-10">Leaderboard</h2>
+    <div className="flex flex-col items-center min-h-screen pb-20 landscape:pb-32 font-coffee">
+      <h2 className="text-2xl mb-3 mt-10">Leaderboard</h2>
 
       <div className='flex-grow w-full overflow-y-auto px-2 max-h-[80vh] space-y-2 pb-3'>
         {/* Best Time Table */}

@@ -13,7 +13,6 @@ import penLogo from "../assets/icons/pen.svg"
 import hintLogo from "../assets/icons/lightbulb.svg"
 import videoLogo from "../assets/icons/video.svg"
 import { AdMob, RewardAdPluginEvents } from "@capacitor-community/admob";
-import pokiService from "../pokiService";
 
 const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed, setLoadingAd, setIsAd }) => {
   const cats = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
@@ -163,7 +162,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
           >
             <img src={hintLogo} alt="hint" className="h-7 w-7" />
           </button>
-          <div className="absolute top-[-0.4rem] right-[-0.4rem] h-4 w-4 z-10"
+          <div className="absolute top-[-0.4rem] right-[-0.4rem] h-4 w-4 z-10 font-coffee"
           >
             {!freeHintUsed ?
               "1" :
