@@ -57,17 +57,16 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
               `}
             onClick={() => !isLocked && onCellClick(row, col)}
           >
-            {isPaused ? (
-              ""
-            ) : notesGrid[row][col].length ? (
+
+            { notesGrid[row][col].length ? (
               <div className="grid grid-cols-3 w-full h-full">
                 {notesGrid[row][col].map((note, i) => (
-                  <img key={i} src={catImages[note]} alt={`Cat note ${note}`} className="w-fit h-fit aspect-square" />
+                  <img key={i} src={catImages[note]} alt={`Cat note ${note}`} className={`w-fit h-fit aspect-square ${isPaused ? "invisible" : ""}`} />
                 ))}
               </div>
             ) : (
               number !== null && number >= 1 && number <= 9 ? (
-                <img src={catImages[number]} alt={`Cat ${number}`} className={`w-full h-full ${fadeIn && isLocked ? "opacity-100 transition-opacity duration-700" : !fadeIn ? "opacity-0" : ""}`} />
+                <img src={catImages[number]} alt={`Cat ${number}`} className={`w-full h-full ${fadeIn && isLocked ? "opacity-100 transition-opacity duration-700" : !fadeIn ? "opacity-0" : ""} ${isPaused ? "invisible" : ""}`} />
               ) : ""
             )}
           </div>

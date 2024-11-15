@@ -426,6 +426,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
           break;
       }
     }
+    setSelectedCell(null)
     setIsPaused((prev) => !prev);
   };
 
