@@ -15,18 +15,23 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
     const tooltipTimeoutRef = useRef(null);
     const extraMistakeButtonRef = useRef(null);
 
+    
+  const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
+  const interTest = 'ca-app-pub-3940256099942544/1033173712'
+  const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
+
     const handleReturnToMenu = async () => {
         try {
             setHomeLoadingScreen(true);
             let adShown = false;
             switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
                 case 'android':
-                    await AdMob.prepareInterstitial({ adId: 'ca-app-pub-7381288019033542/4890561760' });
+                    await AdMob.prepareInterstitial({ adId: interTest });
                     await AdMob.showInterstitial();
                     adShown = true;
                     break;
                 case 'ios':
-                    await AdMob.prepareInterstitial({ adId: '' });
+                    await AdMob.prepareInterstitial({ adId: interTest });
                     await AdMob.showInterstitial();
                     adShown = true;
                     break;
@@ -62,14 +67,16 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
             switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
                 case 'android':
                     await AdMob.prepareRewardVideoAd({
-                        adId: 'ca-app-pub-7381288019033542/4907837661',
+                        // adId: 'ca-app-pub-7381288019033542/4907837661',
+                        adId: rewardedTest
                     });
                     await AdMob.showRewardVideoAd();
                     break;
 
                 case 'ios':
                     await AdMob.prepareRewardVideoAd({
-                        adId: '',
+                        // adId: 'ca-app-pub-7381288019033542/2684504166',
+                        adId: rewardedTest
                     });
                     await AdMob.showRewardVideoAd();
                     break;

@@ -22,6 +22,10 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const tooltipTimeoutRef = useRef(null);
   const hintButtonRef = useRef(null);
+  
+  const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
+  const interTest = 'ca-app-pub-3940256099942544/1033173712'
+  const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
 
   const handleCatClick = (event, index) => {
     event.stopPropagation();
@@ -39,14 +43,16 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
         switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
           case 'android':
             await AdMob.prepareRewardVideoAd({
-              adId: 'ca-app-pub-7381288019033542/7880429440',
+              // adId: 'ca-app-pub-7381288019033542/7880429440',
+              adId: rewardedTest,
             });
             await AdMob.showRewardVideoAd();
             break;
 
           case 'ios':
             await AdMob.prepareRewardVideoAd({
-              adId: '',
+              // adId: 'ca-app-pub-7381288019033542/5444299374',
+              adId: rewardedTest
             });
             await AdMob.showRewardVideoAd();
             break;

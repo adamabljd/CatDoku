@@ -59,10 +59,14 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
   const [imageURL, setImageURL] = useState(null);
   const gridRef = useRef(null);
-  const TimerAdId = { android: 'ca-app-pub-7381288019033542/2104616324', ios: 'ca-app-pub-3940256099942544/4411468910' }
-  const RestartGameAdId = { android: 'ca-app-pub-7381288019033542/4656556226', ios: 'ca-app-pub-3940256099942544/4411468910' }
-  const ResumeGameAdId = { android: 'ca-app-pub-7381288019033542/6180997672', ios: 'ca-app-pub-3940256099942544/4411468910' }
-  const rePlayAdId = { android: 'ca-app-pub-7381288019033542/8235744552', ios: 'ca-app-pub-3940256099942544/4411468910' }
+  const TimerAdId = { android: 'ca-app-pub-7381288019033542/2104616324', ios: 'ca-app-pub-7381288019033542/5224807528' }
+  const RestartGameAdId = { android: 'ca-app-pub-7381288019033542/4656556226', ios: 'ca-app-pub-7381288019033542/7691188764' }
+  const ResumeGameAdId = { android: 'ca-app-pub-7381288019033542/6180997672', ios: 'ca-app-pub-7381288019033542/7004964492' }
+  const rePlayAdId = { android: 'ca-app-pub-7381288019033542/8235744552', ios: 'ca-app-pub-7381288019033542/1098031694' }
+  
+  const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
+  const interTest = 'ca-app-pub-3940256099942544/1033173712'
+  const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
 
   const showAd = async (id) => {
     if (isAd) return;
@@ -99,10 +103,12 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     initGame()
     switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
       case "android":
-        showAd(RestartGameAdId.android);
+        // showAd(RestartGameAdId.android);
+        showAd(interTest)
         break;
       case "ios":
-        showAd(RestartGameAdId.ios);
+        // showAd(RestartGameAdId.ios);
+        showAd(interTest)
         break;
       default:
         break;
@@ -192,10 +198,12 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     if (isResuming) {
       switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
         case "android":
-          showAd(ResumeGameAdId.android);
+          // showAd(ResumeGameAdId.android);
+          showAd(interTest)
           break;
         case "ios":
-          showAd(ResumeGameAdId.ios);
+          // showAd(ResumeGameAdId.ios);
+          showAd(interTest)
           break;
         default:
           break;
@@ -383,10 +391,12 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
           if (newTimer % 420 === 0) {
             switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
               case "android":
-                showAd(TimerAdId.android);
+                // showAd(TimerAdId.android);
+                showAd(interTest)
                 break;
               case "ios":
-                showAd(TimerAdId.ios);
+                // showAd(TimerAdId.ios);
+                showAd(interTest)
                 break;
               default:
                 break;
@@ -412,10 +422,12 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     if (isPaused) {
       switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
         case "android":
-          showAd(rePlayAdId.android);
+          // showAd(rePlayAdId.android);
+          showAd(interTest)
           break;
         case "ios":
-          showAd(rePlayAdId.ios);
+          // showAd(rePlayAdId.ios);
+          showAd(interTest)
           break;
         default:
           break;
@@ -825,7 +837,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
       case 'android':
         await AdMob.showBanner({
-          adId: 'ca-app-pub-7381288019033542/1651953082',
+          // adId: 'ca-app-pub-7381288019033542/1651953082',
+          adId: bannerTest,
           position: BannerAdPosition.BOTTOM_CENTER,
           size: BannerAdSize.ADAPTIVE_BANNER,
         });
@@ -833,7 +846,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
       case 'ios':
         await AdMob.showBanner({
-          adId: '',
+          // adId: 'ca-app-pub-7381288019033542/6597598946',
+          adId: bannerTest,
           position: BannerAdPosition.BOTTOM_CENTER,
           size: BannerAdSize.ADAPTIVE_BANNER,
         });

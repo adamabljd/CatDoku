@@ -9,6 +9,11 @@ import { AdMob, BannerAdPosition, BannerAdSize } from '@capacitor-community/admo
 const difficulties = ["Easy", "Medium", "Hard", "Expert", "Master"];
 const mistakesOptions = [1, 2, 3, 4, 5, Infinity];
 
+
+const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
+const interTest = 'ca-app-pub-3940256099942544/1033173712'
+const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
+
 const BestTimesPage = () => {
   const [bestTimes, setBestTimes] = useState({});
   const [wins, setWins] = useState({});
@@ -45,7 +50,8 @@ const BestTimesPage = () => {
     switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
       case 'android':
         await AdMob.showBanner({
-          adId: 'ca-app-pub-7381288019033542/6012934144',
+          // adId: 'ca-app-pub-7381288019033542/6012934144',
+          adId: bannerTest,
           position: BannerAdPosition.BOTTOM_CENTER,
           size: BannerAdSize.ADAPTIVE_BANNER,
         });
@@ -53,7 +59,8 @@ const BestTimesPage = () => {
 
       case 'ios':
         await AdMob.showBanner({
-          adId: '',
+          // adId: 'ca-app-pub-7381288019033542/9002500501',
+          adId: bannerTest,
           position: BannerAdPosition.BOTTOM_CENTER,
           size: BannerAdSize.ADAPTIVE_BANNER,
         });

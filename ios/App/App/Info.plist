@@ -47,5 +47,11 @@
 	<true/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We need access to save images to your gallery.</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-7381288019033542~5052944371</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key><true/>
+	</dict>
 </dict>
 </plist>

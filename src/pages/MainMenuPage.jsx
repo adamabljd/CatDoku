@@ -28,11 +28,16 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
   const dropdownRef = useRef(null);
   const tooltipTimeoutRef = useRef(null);
 
+  const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
+  const interTest = 'ca-app-pub-3940256099942544/1033173712'
+  const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
+
   const showAd = async () => {
     switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
       case 'android':
         await AdMob.showBanner({
-          adId: 'ca-app-pub-7381288019033542/2071389944',
+          // adId: 'ca-app-pub-7381288019033542/2071389944',
+          adId: bannerTest,
           position: BannerAdPosition.BOTTOM_CENTER,
           size: "SMART_BANNER",
         });
@@ -40,7 +45,8 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
 
       case 'ios':
         await AdMob.showBanner({
-          adId: '',
+          // adId: 'ca-app-pub-7381288019033542/1161610875',
+          adId: bannerTest,
           position: BannerAdPosition.BOTTOM_CENTER,
           size: "SMART_BANNER",
         });
