@@ -39,7 +39,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
         switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
           case 'android':
             await AdMob.prepareRewardVideoAd({
-              adId: 'ca-app-pub-3940256099942544/5224354917',
+              adId: 'ca-app-pub-7381288019033542/7880429440',
             });
             await AdMob.showRewardVideoAd();
             break;

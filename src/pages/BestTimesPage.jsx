@@ -45,7 +45,7 @@ const BestTimesPage = () => {
     switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
       case 'android':
         await AdMob.showBanner({
-          adId: 'ca-app-pub-3940256099942544/6300978111',
+          adId: 'ca-app-pub-7381288019033542/6012934144',
           position: BannerAdPosition.BOTTOM_CENTER,
           size: BannerAdSize.ADAPTIVE_BANNER,
         });

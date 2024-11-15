@@ -5,7 +5,6 @@ import { useWindowSize } from 'react-use';
 import houseLogo from '../assets/icons/house.svg';
 import purrSound from '../assets/sounds/cat_purr.mp3';
 import { AdMob, InterstitialAdPluginEvents } from '@capacitor-community/admob';
-import downloadLogo from '../assets/icons/download.svg'
 import LoadingScreen from '../pages/LoadingScreen';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
@@ -49,12 +48,12 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
             let adShown = false;
             switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
                 case 'android':
-                    await AdMob.prepareInterstitial({ adId: 'ca-app-pub-3940256099942544/1033173712' });
+                    await AdMob.prepareInterstitial({ adId: 'ca-app-pub-7381288019033542/4890561760' });
                     await AdMob.showInterstitial();
                     adShown = true;
                     break;
                 case 'ios':
-                    await AdMob.prepareInterstitial({ adId: 'ca-app-pub-3940256099942544/4411468910' });
+                    await AdMob.prepareInterstitial({ adId: '' });
                     await AdMob.showInterstitial();
                     adShown = true;
                     break;

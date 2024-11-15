@@ -59,10 +59,10 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
   const [imageURL, setImageURL] = useState(null);
   const gridRef = useRef(null);
-  const TimerAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
-  const RestartGameAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
-  const ResumeGameAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
-  const rePlayAdId = { android: 'ca-app-pub-3940256099942544/1033173712', ios: 'ca-app-pub-3940256099942544/4411468910' }
+  const TimerAdId = { android: 'ca-app-pub-7381288019033542/2104616324', ios: 'ca-app-pub-3940256099942544/4411468910' }
+  const RestartGameAdId = { android: 'ca-app-pub-7381288019033542/4656556226', ios: 'ca-app-pub-3940256099942544/4411468910' }
+  const ResumeGameAdId = { android: 'ca-app-pub-7381288019033542/6180997672', ios: 'ca-app-pub-3940256099942544/4411468910' }
+  const rePlayAdId = { android: 'ca-app-pub-7381288019033542/8235744552', ios: 'ca-app-pub-3940256099942544/4411468910' }
 
   const showAd = async (id) => {
     if (isAd) return;
@@ -139,11 +139,6 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         useCORS: true,
         backgroundColor: null,
       });
-      // const highResCanvas = document.createElement("canvas");
-      // highResCanvas.width = canvas.width;
-      // highResCanvas.height = canvas.height;
-      // const ctx = highResCanvas.getContext("2d");
-      // ctx.drawImage(canvas, 0, 0);
 
       // Convert to data URL at maximum quality for PNG, or specify quality if using JPEG
       const image = canvas.toDataURL("image/png", 1.0);
@@ -830,7 +825,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
       case 'android':
         await AdMob.showBanner({
-          adId: 'ca-app-pub-3940256099942544/6300978111',
+          adId: 'ca-app-pub-7381288019033542/1651953082',
           position: BannerAdPosition.BOTTOM_CENTER,
           size: BannerAdSize.ADAPTIVE_BANNER,
         });

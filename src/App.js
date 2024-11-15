@@ -17,8 +17,8 @@ function App() {
       const initializeAdMob = async () => {
         await AdMob.initialize({
           requestTrackingAuthorization: true,
-          testingDevices: [],
-          initializeForTesting: true
+          // testingDevices: [],
+          // initializeForTesting: true
         });
       };
 
