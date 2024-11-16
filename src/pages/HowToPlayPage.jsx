@@ -20,33 +20,32 @@ const HowToPlayPage = () => {
     const navigate = useNavigate();
 
     const showAd = async () => {
-        switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
-            case 'android':
-                await AdMob.showBanner({
-                    // adId: 'ca-app-pub-7381288019033542/3327061050',
-                    adId: bannerTest,
-                    position: BannerAdPosition.BOTTOM_CENTER,
-                    size: BannerAdSize.ADAPTIVE_BANNER,
-                });
-                break;
+        try {
+            switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+                case 'android':
+                    await AdMob.showBanner({
+                        // adId: 'ca-app-pub-7381288019033542/3327061050',
+                        adId: bannerTest,
+                        position: BannerAdPosition.BOTTOM_CENTER,
+                        size: BannerAdSize.ADAPTIVE_BANNER,
+                    });
+                    break;
 
-            case 'ios':
-                await AdMob.showBanner({
-                    // adId: 'ca-app-pub-7381288019033542/6976872892',
-                    adId: bannerTest,
-                    position: BannerAdPosition.BOTTOM_CENTER,
-                    size: BannerAdSize.ADAPTIVE_BANNER,
-                });
-                break;
+                case 'ios':
+                    await AdMob.showBanner({
+                        // adId: 'ca-app-pub-7381288019033542/6976872892',
+                        adId: bannerTest,
+                        position: BannerAdPosition.BOTTOM_CENTER,
+                        size: BannerAdSize.ADAPTIVE_BANNER,
+                    });
+                    break;
 
-            case 'poki':
-                console.log("Poki ads will be implemented here.");
-                // Implement Poki ad logic here when ready
-                break;
-
-            default:
-                console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
-                break;
+                default:
+                    console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+                    break;
+            }
+        } catch (error) {
+            console.error('AdMob banner failed:', error);
         }
     };
 
@@ -54,7 +53,7 @@ const HowToPlayPage = () => {
         if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
             AdMob.removeBanner().then(() => {
                 showAd();
-            });
+            }).catch((error) => console.error("Failed to remove AdMob banner:", error));
 
             return () => {
                 AdMob.removeBanner();

@@ -33,28 +33,34 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
   const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
 
   const showAd = async () => {
-    switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
-      case 'android':
-        await AdMob.showBanner({
-          // adId: 'ca-app-pub-7381288019033542/2071389944',
-          adId: bannerTest,
-          position: BannerAdPosition.BOTTOM_CENTER,
-          size: "SMART_BANNER",
-        });
-        break;
+    try {
 
-      case 'ios':
-        await AdMob.showBanner({
-          // adId: 'ca-app-pub-7381288019033542/1161610875',
-          adId: bannerTest,
-          position: BannerAdPosition.BOTTOM_CENTER,
-          size: "SMART_BANNER",
-        });
-        break;
 
-      default:
-        console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
-        break;
+      switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+        case 'android':
+          await AdMob.showBanner({
+            // adId: 'ca-app-pub-7381288019033542/2071389944',
+            adId: bannerTest,
+            position: BannerAdPosition.BOTTOM_CENTER,
+            size: "SMART_BANNER",
+          });
+          break;
+
+        case 'ios':
+          await AdMob.showBanner({
+            // adId: 'ca-app-pub-7381288019033542/1161610875',
+            adId: bannerTest,
+            position: BannerAdPosition.BOTTOM_CENTER,
+            size: "SMART_BANNER",
+          });
+          break;
+
+        default:
+          console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+          break;
+      }
+    } catch (error) {
+      console.error('AdMob Banner failed:', error);
     }
   };
 
@@ -62,7 +68,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
     if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
       AdMob.removeBanner().then(() => {
         showAd();
-      });
+      }).catch((error) => console.error("Failed to remove AdMob banner:", error));
 
       return () => {
         AdMob.removeBanner();

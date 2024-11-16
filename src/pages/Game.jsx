@@ -63,7 +63,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   const RestartGameAdId = { android: 'ca-app-pub-7381288019033542/4656556226', ios: 'ca-app-pub-7381288019033542/7691188764' }
   const ResumeGameAdId = { android: 'ca-app-pub-7381288019033542/6180997672', ios: 'ca-app-pub-7381288019033542/7004964492' }
   const rePlayAdId = { android: 'ca-app-pub-7381288019033542/8235744552', ios: 'ca-app-pub-7381288019033542/1098031694' }
-  
+
   const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
   const interTest = 'ca-app-pub-3940256099942544/1033173712'
   const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
@@ -834,28 +834,32 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   };
 
   const showBannerAd = async () => {
-    switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
-      case 'android':
-        await AdMob.showBanner({
-          // adId: 'ca-app-pub-7381288019033542/1651953082',
-          adId: bannerTest,
-          position: BannerAdPosition.BOTTOM_CENTER,
-          size: BannerAdSize.ADAPTIVE_BANNER,
-        });
-        break;
+    try {
+      switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+        case 'android':
+          await AdMob.showBanner({
+            // adId: 'ca-app-pub-7381288019033542/1651953082',
+            adId: bannerTest,
+            position: BannerAdPosition.BOTTOM_CENTER,
+            size: BannerAdSize.ADAPTIVE_BANNER,
+          });
+          break;
 
-      case 'ios':
-        await AdMob.showBanner({
-          // adId: 'ca-app-pub-7381288019033542/6597598946',
-          adId: bannerTest,
-          position: BannerAdPosition.BOTTOM_CENTER,
-          size: BannerAdSize.ADAPTIVE_BANNER,
-        });
-        break;
+        case 'ios':
+          await AdMob.showBanner({
+            // adId: 'ca-app-pub-7381288019033542/6597598946',
+            adId: bannerTest,
+            position: BannerAdPosition.BOTTOM_CENTER,
+            size: BannerAdSize.ADAPTIVE_BANNER,
+          });
+          break;
 
-      default:
-        console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
-        break;
+        default:
+          console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+          break;
+      }
+    } catch (error) {
+      console.error('AdMob banner failed:', error);
     }
   };
 
@@ -863,7 +867,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
       AdMob.removeBanner().then(() => {
         showBannerAd();
-      });
+      }).catch((error) => console.error("Failed to remove AdMob banner:", error));
 
       return () => {
         AdMob.removeBanner();

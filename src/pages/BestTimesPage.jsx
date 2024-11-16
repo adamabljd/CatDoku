@@ -47,33 +47,32 @@ const BestTimesPage = () => {
   }, []);
 
   const showAd = async () => {
-    switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
-      case 'android':
-        await AdMob.showBanner({
-          // adId: 'ca-app-pub-7381288019033542/6012934144',
-          adId: bannerTest,
-          position: BannerAdPosition.BOTTOM_CENTER,
-          size: BannerAdSize.ADAPTIVE_BANNER,
-        });
-        break;
-
-      case 'ios':
-        await AdMob.showBanner({
-          // adId: 'ca-app-pub-7381288019033542/9002500501',
-          adId: bannerTest,
-          position: BannerAdPosition.BOTTOM_CENTER,
-          size: BannerAdSize.ADAPTIVE_BANNER,
-        });
-        break;
-
-      case 'poki':
-        console.log("Poki ads will be implemented here.");
-        // Implement Poki ad logic here when ready
-        break;
-
-      default:
-        console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
-        break;
+    try{
+      switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+        case 'android':
+          await AdMob.showBanner({
+            // adId: 'ca-app-pub-7381288019033542/6012934144',
+            adId: bannerTest,
+            position: BannerAdPosition.BOTTOM_CENTER,
+            size: BannerAdSize.ADAPTIVE_BANNER,
+          });
+          break;
+  
+        case 'ios':
+          await AdMob.showBanner({
+            // adId: 'ca-app-pub-7381288019033542/9002500501',
+            adId: bannerTest,
+            position: BannerAdPosition.BOTTOM_CENTER,
+            size: BannerAdSize.ADAPTIVE_BANNER,
+          });
+          break;
+  
+        default:
+          console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+          break;
+      }
+    } catch (error) {
+      console.error('AdMob banner failed:', error);
     }
   };
 
@@ -81,14 +80,14 @@ const BestTimesPage = () => {
     if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
       AdMob.removeBanner().then(() => {
         showAd();
-      });
+      }).catch((error) => console.error("Failed to remove AdMob banner:", error));
 
       return () => {
         AdMob.removeBanner();
       };
     }
   }, []);
-  
+
   const formatTime = (time) => {
     if (!time) return "-";
     const minutes = Math.floor(time / 60);

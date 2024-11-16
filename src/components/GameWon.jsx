@@ -21,10 +21,9 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
 
     audio.volume = 0.6
 
-    
-  const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
-  const interTest = 'ca-app-pub-3940256099942544/1033173712'
-  const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
+    const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
+    const interTest = 'ca-app-pub-3940256099942544/1033173712'
+    const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
 
     // Stop confetti after 5 seconds
     useEffect(() => {
@@ -48,7 +47,6 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
         audio.pause();
         audio.currentTime = 0;
         try {
-
             setLoadingAd(true);
             let adShown = false;
             switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
@@ -66,7 +64,6 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
                     console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
                     break;
             }
-
             if (adShown) {
                 const adDismissListener = await AdMob.addListener(
                     InterstitialAdPluginEvents.Dismissed,
@@ -86,7 +83,6 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
             navigate("/");
         }
     };
-
 
     const downloadGameTemplate = async () => {
         const canvasWidth = 1600;
@@ -136,8 +132,8 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
                 data: base64Data,
                 directory: Directory.Cache,
             });
-    
-    
+
+
             if (Capacitor.isNativePlatform()) {
                 // Use Camera plugin to add the saved file to the gallery
                 await Share.share({
@@ -158,7 +154,6 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
             alert('Failed to share image.');
         }
     };
-
 
     return (
         <>
