@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 import { useNavigate } from 'react-router-dom';
@@ -59,6 +60,11 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
                     await AdMob.prepareInterstitial({ adId: interTest });
                     await AdMob.showInterstitial();
                     adShown = true;
+                    break;
+                case "gameMonetize":
+                    if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+                        sdk.showBanner()
+                    }
                     break;
                 default:
                     console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");

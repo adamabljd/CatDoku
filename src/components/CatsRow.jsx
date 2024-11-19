@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useEffect, useRef, useState } from "react";
 import cat1 from "../assets/cats/Catdoku 1.png"
 import cat2 from "../assets/cats/Catdoku 2.png"
@@ -14,7 +15,7 @@ import hintLogo from "../assets/icons/lightbulb.svg"
 import videoLogo from "../assets/icons/video.svg"
 import { AdMob, RewardAdPluginEvents } from "@capacitor-community/admob";
 
-const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed, setLoadingAd, setIsAd }) => {
+const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleNotesMode, isPaused, revealNumber, freeHintUsed, setFreeHintUsed, setLoadingAd, setIsAd, isAd }) => {
   const cats = [cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9];
 
   const [showTooltip, setShowTooltip] = useState(false);
@@ -22,7 +23,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const tooltipTimeoutRef = useRef(null);
   const hintButtonRef = useRef(null);
-  
+
   const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
   const interTest = 'ca-app-pub-3940256099942544/1033173712'
   const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
@@ -56,7 +57,11 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
             });
             await AdMob.showRewardVideoAd();
             break;
-
+          case "gameMonetize":
+            if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+              sdk.showBanner()
+            }
+            break;
           default:
             setTooltipMessage("Hint feature only available on iOS and Android");
             setTooltipPosition({ top: event.clientY - 50, left: event.clientX - 30 });
@@ -110,6 +115,13 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
         if (adRewardListener) {
           adRewardListener.remove();
         }
+      };
+    }
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === "gameMonetize") {
+      window.revealNumber = revealNumber;
+      setIsAd(false);
+      return () => {
+        window.revealNumber = null; // Cleanup when component unmounts
       };
     }
     return () => clearTimeout(tooltipTimeoutRef.current);

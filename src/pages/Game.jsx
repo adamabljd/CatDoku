@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
 import Grid from "../components/Grid";
@@ -110,6 +111,16 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         // showAd(RestartGameAdId.ios);
         showAd(interTest)
         break;
+      case "gameMonetize":
+        if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+          try {
+            sdk.showBanner()
+          } catch (error) {
+            console.error("Ad failed or was skipped:", error);
+            setIsAd(false);
+          };
+        }
+        break;
       default:
         break;
     }
@@ -136,7 +147,24 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         }
       };
     }
+
+
   }, [setIsAd]);
+
+  useEffect(() => {
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'gameMonetize') {
+      const checkAdStatus = () => {
+        if (typeof window.ad !== "undefined") {
+          setIsAd(window.ad)
+          setSoundEnabled(!window.ad);
+          console.log("Ad status updated:", window.ad);
+        }
+      };
+      // Poll for ad status every 100ms
+      const interval = setInterval(checkAdStatus, 100);
+      return () => clearInterval(interval);
+    }
+  }, [])
 
   const captureGridAsImage = async () => {
     if (gridRef.current) {
@@ -204,6 +232,16 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         case "ios":
           // showAd(ResumeGameAdId.ios);
           showAd(interTest)
+          break;
+        case "gameMonetize":
+          if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+            try {
+              sdk.showBanner()
+            } catch (error) {
+              console.error("Ad failed or was skipped:", error);
+              setIsAd(false);
+            };
+          }
           break;
         default:
           break;
@@ -398,6 +436,16 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                 // showAd(TimerAdId.ios);
                 showAd(interTest)
                 break;
+              case "gameMonetize":
+                if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+                  try {
+                    sdk.showBanner()
+                  } catch (error) {
+                    console.error("Ad failed or was skipped:", error);
+                    setIsAd(false);
+                  };
+                }
+                break;
               default:
                 break;
             }
@@ -428,6 +476,16 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         case "ios":
           // showAd(rePlayAdId.ios);
           showAd(interTest)
+          break;
+        case "gameMonetize":
+          if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+            try {
+              sdk.showBanner()
+            } catch (error) {
+              console.error("Ad failed or was skipped:", error);
+              setIsAd(false);
+            };
+          }
           break;
         default:
           break;
@@ -875,6 +933,21 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     }
   }, []);
 
+  // Function to reveal the solution grid and win the game
+  const revealSolution = () => {
+    const newGrid = [...solutionGrid];
+    setGrid(newGrid);
+    setCorrectCells(
+      Array(9)
+        .fill(null)
+        .flatMap((_, row) =>
+          Array(9)
+            .fill(null)
+            .map((_, col) => ({ row, col }))
+        )
+    );
+    checkIfGameWon(newGrid);
+  };
 
   if (!isLoaded) {
     return <LoadingScreen />;
@@ -889,7 +962,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       )}
       {/* Render based on explicit checks */}
       {isLoaded && gameOver && !gameWon ? (
-        <GameLost mistakes={mistakes} setMistakes={setMistakes} setGameOver={setGameOver} setLoadingAd={setLoadingAd} setIsAd={setIsAd} />
+        <GameLost mistakes={mistakes} setMistakes={setMistakes} setGameOver={setGameOver} setLoadingAd={setLoadingAd} setIsAd={setIsAd} isAd={isAd} />
       ) : isLoaded && gameWon && !gameOver ? (
         <GameWon imageURL={imageURL} bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} soundEnabled={soundEnabled} />
 
@@ -947,6 +1020,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                   setFreeHintUsed={setFreeHintUsed}
                   setLoadingAd={setLoadingAd}
                   setIsAd={setIsAd}
+                  isAd={isAd}
                 />
               </div>
             )}
@@ -965,6 +1039,15 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
             )}
           </>
         )
+      )}
+
+      {process.env.REACT_APP_ACTIVE_SYSTEM === "dev" && (
+        <button
+          onClick={revealSolution}
+          className="bg-red-500 text-white p-2 rounded"
+        >
+          Reveal Solution
+        </button>
       )}
     </div>
   );

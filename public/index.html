@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="./Catdoku-logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0d0d0d" />
-    <meta
-      name="description"
-      content="MiawDoku!"
-    />
-    <link rel="apple-touch-icon" href="./Catdoku-logo.png" />
-    <!--
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="./Catdoku-logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0d0d0d" />
+  <meta name="description" content="MiawDoku!" />
+  <link rel="apple-touch-icon" href="./Catdoku-logo.png" />
+  <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="./manifest.json" />
-    <!--
+  <link rel="manifest" href="./manifest.json" />
+  <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -24,13 +22,46 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>MiawDoku!</title>
-    <!-- <script src="https://game-cdn.poki.com/scripts/v2/poki-sdk.js"></script> -->
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
+  <title>MiawDoku!</title>
+  <!-- <script src="https://game-cdn.poki.com/scripts/v2/poki-sdk.js"></script> -->
+  <script type="text/javascript">
+    window.SDK_OPTIONS = {
+      gameId: "ibxh9nrcp3829n579aq6ecih5ovori0y",
+      onEvent: function (a) {
+        switch (a.name) {
+          case "SDK_GAME_PAUSE":
+            // pause game logic / mute audio
+            console.log("Ad started");
+            window.ad = true;
+            break;
+          case "SDK_GAME_START":
+            // advertisement done, resume game logic and unmute audio
+            console.log("Ad finished");
+            if (window.ad && window.revealNumber) {
+              window.revealNumber();
+            }
+            if (window.ad && window.extraMistakeGiven) {
+              window.extraMistakeGiven();
+            }
+            window.ad = false;
+            break;
+          case "SDK_READY":
+            // when sdk is ready
+            break;
+        }
+      }
+    };
+    (function (a, b, c) {
+      var d = a.getElementsByTagName(b)[0];
+      a.getElementById(c) || (a = a.createElement(b), a.id = c, a.src = "https://api.gamemonetize.com/sdk.js", d.parentNode.insertBefore(a, d))
+    })(document, "script", "gamemonetize-sdk"); 
+  </script>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
 
@@ -40,5 +71,6 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-  </body>
+</body>
+
 </html>

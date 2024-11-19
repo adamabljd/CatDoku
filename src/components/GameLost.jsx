@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import houseLogo from '../assets/icons/house.svg';
@@ -5,7 +6,7 @@ import videoLogo from '../assets/icons/video.svg';
 import { AdMob, InterstitialAdPluginEvents, RewardAdPluginEvents } from '@capacitor-community/admob';
 import LoadingScreen from '../pages/LoadingScreen';
 
-const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd }) => {
+const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd, isAd }) => {
     const navigate = useNavigate();
     const [homeLoadingScreen, setHomeLoadingScreen] = useState(false)
 
@@ -15,10 +16,18 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
     const tooltipTimeoutRef = useRef(null);
     const extraMistakeButtonRef = useRef(null);
 
-    
-  const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
-  const interTest = 'ca-app-pub-3940256099942544/1033173712'
-  const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
+
+    const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
+    const interTest = 'ca-app-pub-3940256099942544/1033173712'
+    const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const extraMistakeGiven = () => {
+        setIsAd(false);
+        setMistakes((prevMistakes) => prevMistakes - 1);
+        setGameOver(false);
+    }
+
 
     const handleReturnToMenu = async () => {
         try {
@@ -34,6 +43,11 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                     await AdMob.prepareInterstitial({ adId: interTest });
                     await AdMob.showInterstitial();
                     adShown = true;
+                    break;
+                case "gameMonetize":
+                    if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+                        sdk.showBanner()
+                    }
                     break;
                 default:
                     console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
@@ -79,6 +93,11 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                         adId: rewardedTest
                     });
                     await AdMob.showRewardVideoAd();
+                    break;
+                case "gameMonetize":
+                    if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+                        sdk.showBanner()
+                    }
                     break;
 
                 default:
@@ -130,8 +149,18 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                 }
             };
         }
+
         return () => clearTimeout(tooltipTimeoutRef.current);
     }, [setIsAd, setMistakes, setGameOver]);
+
+    useEffect(() => {
+        if (process.env.REACT_APP_ACTIVE_SYSTEM === "gameMonetize") {
+            window.extraMistakeGiven = extraMistakeGiven;
+            return () => {
+                window.extraMistakeGiven = null;
+            };
+        }
+    }, [extraMistakeGiven])
 
     useEffect(() => {
         const handleDocumentClick = (event) => {
