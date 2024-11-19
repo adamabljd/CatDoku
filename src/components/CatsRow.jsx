@@ -60,6 +60,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
           case "gameMonetize":
             if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
               sdk.showBanner()
+              window.hint = true;
             }
             break;
           default:
@@ -121,7 +122,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
       window.revealNumber = revealNumber;
       setIsAd(false);
       return () => {
-        window.revealNumber = null; // Cleanup when component unmounts
+        window.revealNumber = null;
       };
     }
     return () => clearTimeout(tooltipTimeoutRef.current);

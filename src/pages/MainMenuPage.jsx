@@ -116,7 +116,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
       const hardWins = parseInt(hardWinsData.value) || 0;
       const expertWins = parseInt(expertWinsData.value) || 0;
 
-      if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+      if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === "gameMonetize") {
         setIsMediumUnlocked(easyWins >= 5);
         setIsHardUnlocked(mediumWins >= 3);
         setIsExpertUnlocked(hardWins >= 2);

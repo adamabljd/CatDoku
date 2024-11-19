@@ -37,13 +37,15 @@
           case "SDK_GAME_START":
             // advertisement done, resume game logic and unmute audio
             console.log("Ad finished");
-            if (window.ad && window.revealNumber) {
+            window.ad = false;
+            if (window.ad && window.hint && window.revealNumber) {
               window.revealNumber();
             }
-            if (window.ad && window.extraMistakeGiven) {
+            if (window.ad && window.extraMistake && window.extraMistakeGiven) {
               window.extraMistakeGiven();
             }
-            window.ad = false;
+            window.hint = false
+            window.extraMistake = false
             break;
           case "SDK_READY":
             // when sdk is ready

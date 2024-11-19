@@ -97,6 +97,7 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd, i
                 case "gameMonetize":
                     if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
                         sdk.showBanner()
+                        window.extraMistake = true
                     }
                     break;
 
