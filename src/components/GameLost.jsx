@@ -97,7 +97,7 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd, i
                 case "gameMonetize":
                     if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
                         sdk.showBanner()
-                        window.extraMistake = true
+                        window.extraM = true
                     }
                     break;
 
@@ -156,7 +156,13 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd, i
 
     useEffect(() => {
         if (process.env.REACT_APP_ACTIVE_SYSTEM === "gameMonetize") {
-            window.extraMistakeGiven = extraMistakeGiven;
+            if(window.extraMistake){
+                window.extraMistakeGiven = extraMistakeGiven;
+                extraMistakeGiven()
+                window.extraMistake = false
+                window.extraM = false
+            }
+            
             return () => {
                 window.extraMistakeGiven = null;
             };

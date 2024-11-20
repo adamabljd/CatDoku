@@ -30,7 +30,7 @@ function App() {
 
   return (
     <Router basename="/">
-      <div className="min-h-screen bg-beige px-3">
+      <div className="min-h-screen h-screen bg-beige px-3 overflow-y-auto">
         <Routes>
           <Route path="/" element={<MainMenuPage
             soundEnabled={soundEnabled}

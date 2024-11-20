@@ -33,17 +33,28 @@
             // pause game logic / mute audio
             console.log("Ad started");
             window.ad = true;
+            if(window.playHint){
+              window.hint = true
+            }
+            if (window.ad && window.hint && window.revealNumber && window.playHint) {
+              window.revealNumber();
+              window.hint = false
+              window.playHint = false
+            }
+            if(window.extraM){
+              window.extraMistake = true
+            }
+            if (window.ad && window.extraMistake && window.extraMistakeGiven && window.extraM) {
+              window.extraMistakeGiven();
+              window.extraMistake = false
+              window.extraM = false
+            }
             break;
           case "SDK_GAME_START":
             // advertisement done, resume game logic and unmute audio
             console.log("Ad finished");
             window.ad = false;
-            if (window.ad && window.hint && window.revealNumber) {
-              window.revealNumber();
-            }
-            if (window.ad && window.extraMistake && window.extraMistakeGiven) {
-              window.extraMistakeGiven();
-            }
+            
             window.hint = false
             window.extraMistake = false
             break;

@@ -60,7 +60,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
           case "gameMonetize":
             if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
               sdk.showBanner()
-              window.hint = true;
+              window.playHint = true;
             }
             break;
           default:
@@ -119,7 +119,12 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
       };
     }
     if (process.env.REACT_APP_ACTIVE_SYSTEM === "gameMonetize") {
-      window.revealNumber = revealNumber;
+      if(window.hint){
+        window.revealNumber = revealNumber;
+        revealNumber();
+        window.hint = false
+        window.playHint = false
+      }
       setIsAd(false);
       return () => {
         window.revealNumber = null;

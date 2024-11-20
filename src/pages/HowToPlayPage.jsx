@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import houseLogo from '../assets/icons/house.svg';
@@ -18,6 +19,7 @@ const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
 
 const HowToPlayPage = () => {
     const navigate = useNavigate();
+    const isGameMonetize = process.env.REACT_APP_ACTIVE_SYSTEM === "gameMonetize"
 
     const showAd = async () => {
         try {
@@ -61,8 +63,31 @@ const HowToPlayPage = () => {
         }
     }, []);
 
+    const handleHomeClickWeb = () => {
+        if(isGameMonetize){
+            if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+                try {
+                  sdk.showBanner()
+                } catch (error) {
+                  console.error("Ad failed or was skipped:", error);
+                };
+              }
+        }
+        navigate('/')
+        
+    }
+
     return (
         <div className="py-6 text-gray-800 flex flex-col items-center space-y-5 pb-20 landscape:pb-32 font-coffee">
+            {isGameMonetize ?
+                (
+                    <button
+                        onClick={handleHomeClickWeb}
+                        className="bg-stone-400 shadow-md rounded-md p-2 flex items-center"
+                    >
+                        <img src={houseLogo} alt="house" className="h-7 w-7" />
+                    </button>
+                ) : ""}
             <h1 className="text-3xl mb-1 text-center px-6">How to Play MiawDoku!</h1>
 
             <section className="space-y-4 max-w-lg">

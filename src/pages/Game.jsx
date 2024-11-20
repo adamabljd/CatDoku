@@ -246,6 +246,17 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         default:
           break;
       }
+    } else {
+      if (process.env.REACT_APP_ACTIVE_SYSTEM === "gameMonetize") {
+        if (typeof sdk !== 'undefined' && sdk.showBanner !== 'undefined') {
+          try {
+            sdk.showBanner()
+          } catch (error) {
+            console.error("Ad failed or was skipped:", error);
+            setIsAd(false);
+          };
+        }
+      }
     }
     const loadGame = async () => {
       if (isResuming) {
@@ -954,7 +965,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   }
 
   return (
-    <div className="space-y-5 mt-5 landscape:pb-32">
+    <div className="space-y-3 mt-3 landscape:pb-32">
       {loadingAd && (
         <div className="fixed inset-0 z-50 bg-beige flex justify-center items-center">
           <LoadingScreen />

@@ -116,7 +116,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
       const hardWins = parseInt(hardWinsData.value) || 0;
       const expertWins = parseInt(expertWinsData.value) || 0;
 
-      if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === "gameMonetize") {
+      if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
         setIsMediumUnlocked(easyWins >= 5);
         setIsHardUnlocked(mediumWins >= 3);
         setIsExpertUnlocked(hardWins >= 2);
@@ -194,8 +194,8 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
 
   return (
     <div className="flex flex-col pb-10 landscape:pb-20 font-coffee">
-      <div className="flex flex-col items-center mt-20 mb-10 landscape:mt-10">
-        <img src={logo} alt="logo" className="w-56 aspect-square shadow rounded-[1.25rem]" />
+      <div className="flex flex-col items-center mt-3 mb-3 landscape:mt-10">
+        <img src={logo} alt="logo" className="w-32 aspect-square shadow rounded-[1.25rem]" />
         <h1 className="text-4xl text-center mt-3">MiawDoku!</h1>
       </div>
 
@@ -271,7 +271,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
         </div>
 
         <button
-          className="bg-red-800 text-white px-4 py-2 rounded-lg text-lg"
+          className="bg-red-800 text-white px-3 py-1 rounded-lg text-md"
           onClick={handleStartGame}
         >
           Start New Game
@@ -279,7 +279,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
 
         {hasSavedGame && (
           <button
-            className="bg-orange-600 text-white px-4 py-2 rounded-lg text-lg text-center"
+            className="bg-orange-600 text-white px-3 py-1 rounded-lg text-md text-center"
             onClick={handleResumeGame}
           >
             Resume Last Game
