@@ -56,7 +56,7 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
                     adShown = true;
                     break;
                 case 'ios':
-                    await AdMob.prepareInterstitial({ adId: interTest });
+                    await AdMob.prepareInterstitial({ adId: "ca-app-pub-7381288019033542/3257291179" });
                     await AdMob.showInterstitial();
                     adShown = true;
                     break;

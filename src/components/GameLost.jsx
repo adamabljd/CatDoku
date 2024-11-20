@@ -31,7 +31,7 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                     adShown = true;
                     break;
                 case 'ios':
-                    await AdMob.prepareInterstitial({ adId: interTest });
+                    await AdMob.prepareInterstitial({ adId: "ca-app-pub-7381288019033542/3257291179" });
                     await AdMob.showInterstitial();
                     adShown = true;
                     break;
@@ -75,8 +75,8 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
 
                 case 'ios':
                     await AdMob.prepareRewardVideoAd({
-                        // adId: 'ca-app-pub-7381288019033542/2684504166',
-                        adId: rewardedTest
+                        adId: 'ca-app-pub-7381288019033542/2684504166',
+                        // adId: rewardedTest
                     });
                     await AdMob.showRewardVideoAd();
                     break;

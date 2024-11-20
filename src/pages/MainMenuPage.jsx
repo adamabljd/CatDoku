@@ -48,8 +48,8 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
 
         case 'ios':
           await AdMob.showBanner({
-            // adId: 'ca-app-pub-7381288019033542/1161610875',
-            adId: bannerTest,
+            adId: 'ca-app-pub-7381288019033542/1161610875',
+            // adId: bannerTest,
             position: BannerAdPosition.BOTTOM_CENTER,
             size: "SMART_BANNER",
           });

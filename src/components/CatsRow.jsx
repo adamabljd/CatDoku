@@ -51,8 +51,8 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
 
           case 'ios':
             await AdMob.prepareRewardVideoAd({
-              // adId: 'ca-app-pub-7381288019033542/5444299374',
-              adId: rewardedTest
+              adId: 'ca-app-pub-7381288019033542/5444299374',
+              // adId: rewardedTest
             });
             await AdMob.showRewardVideoAd();
             break;

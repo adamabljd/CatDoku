@@ -33,8 +33,8 @@ const HowToPlayPage = () => {
 
                 case 'ios':
                     await AdMob.showBanner({
-                        // adId: 'ca-app-pub-7381288019033542/6976872892',
-                        adId: bannerTest,
+                        adId: 'ca-app-pub-7381288019033542/6976872892',
+                        // adId: bannerTest,
                         position: BannerAdPosition.BOTTOM_CENTER,
                         size: BannerAdSize.ADAPTIVE_BANNER,
                     });

@@ -107,8 +107,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         showAd(interTest)
         break;
       case "ios":
-        // showAd(RestartGameAdId.ios);
-        showAd(interTest)
+        showAd(RestartGameAdId.ios);
+        // showAd(interTest)
         break;
       default:
         break;
@@ -202,8 +202,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
           showAd(interTest)
           break;
         case "ios":
-          // showAd(ResumeGameAdId.ios);
-          showAd(interTest)
+          showAd(ResumeGameAdId.ios);
+          // showAd(interTest)
           break;
         default:
           break;
@@ -395,8 +395,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                 showAd(interTest)
                 break;
               case "ios":
-                // showAd(TimerAdId.ios);
-                showAd(interTest)
+                showAd(TimerAdId.ios);
+                // showAd(interTest)
                 break;
               default:
                 break;
@@ -426,8 +426,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
           showAd(interTest)
           break;
         case "ios":
-          // showAd(rePlayAdId.ios);
-          showAd(interTest)
+          showAd(rePlayAdId.ios);
+          // showAd(interTest)
           break;
         default:
           break;
@@ -847,8 +847,8 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
 
         case 'ios':
           await AdMob.showBanner({
-            // adId: 'ca-app-pub-7381288019033542/6597598946',
-            adId: bannerTest,
+            adId: 'ca-app-pub-7381288019033542/6597598946',
+            // adId: bannerTest,
             position: BannerAdPosition.BOTTOM_CENTER,
             size: BannerAdSize.ADAPTIVE_BANNER,
           });
