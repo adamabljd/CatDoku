@@ -44,18 +44,18 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                 const adDismissListener = await AdMob.addListener(
                     InterstitialAdPluginEvents.Dismissed,
                     () => {
-                        setHomeLoadingScreen(true);
+                        setHomeLoadingScreen(false);
                         navigate("/");
                         adDismissListener.remove();
                     }
                 );
             } else {
-                setHomeLoadingScreen(true);
+                setHomeLoadingScreen(false);
                 navigate("/");
             }
         } catch (error) {
             console.log("Error showing interstitial ad:", error);
-            setHomeLoadingScreen(true);
+            setHomeLoadingScreen(false);
             navigate("/");
         }
     };
@@ -158,7 +158,7 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                                 className="bg-blue-500 shadow-md text-white text-lg rounded-md w-fit p-4 flex items-center justify-center font-bold"
                                 onClick={handleExtraMistakeClick}
                             >
-                                Extra Mistake? <img src={videoLogo} alt="adlogo" className="ms-3 h-6 w-6 shadow-sm" />
+                                Extra Mistake? Watch ad<img src={videoLogo} alt="adlogo" className="mx-2 h-6 w-6 shadow-sm" />
                             </button>
                             {showTooltip && (
                                 <div style={{ position: 'absolute', top: tooltipPosition.top, left: tooltipPosition.left }} className="bg-black text-white text-sm rounded-md p-2 shadow-lg z-50">

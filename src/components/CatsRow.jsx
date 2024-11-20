@@ -172,10 +172,13 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
           >
             {!freeHintUsed ?
               "1" :
-              <img
-                src={freeHintUsed ? videoLogo : "1"}
-                alt="video hint"
-              />
+              <span className="text-xs text-white flex flex-row">
+                <img
+                  src={freeHintUsed ? videoLogo : "1"}
+                  alt="video hint"
+                />
+                <p className="ms-1">watch ad</p>
+              </span>
             }
           </div>
         </div>

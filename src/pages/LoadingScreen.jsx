@@ -29,7 +29,7 @@ const LoadingScreen = () => {
           />
         ))}
       </div>
-      <div className="mt-10">Loading...</div>
+      <div className="mt-10">Loading Ad...</div>
     </div>
   );
 };
