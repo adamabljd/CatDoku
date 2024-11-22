@@ -62,8 +62,8 @@ const HowToPlayPage = () => {
     }, []);
 
     return (
-        <div className="py-6 text-gray-800 flex flex-col items-center space-y-5 pb-20 landscape:pb-32 font-coffee">
-            <h1 className="text-3xl mb-1 text-center px-6">How to Play MiawDoku!</h1>
+        <div className="py-6 text-gray-800 flex flex-col items-center space-y-5 pb-36 font-coffee">
+            <h1 className="text-3xl mb-1 mt-16 text-center px-6">How to Play MiawDoku!</h1>
 
             <section className="space-y-4 max-w-lg">
                 <p className='bg-stone-100 p-2 rounded-md shadow-md'>

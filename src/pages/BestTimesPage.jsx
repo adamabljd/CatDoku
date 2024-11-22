@@ -100,10 +100,10 @@ const BestTimesPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen pb-20 landscape:pb-32 font-coffee">
-      <h2 className="text-2xl mb-3 mt-10">Leaderboard</h2>
+    <div className="flex flex-col items-center min-h-screen pb-36 font-coffee">
+      <h2 className="text-2xl mb-3 mt-16">Leaderboard</h2>
 
-      <div className='flex-grow w-full overflow-y-auto px-2 max-h-[80vh] space-y-2 pb-3'>
+      <div className='flex-grow w-full overflow-y-auto px-4 max-h-[80vh] space-y-2 pb-3'>
         {/* Best Time Table */}
         <LeaderboardTable
           title="Best Time"
