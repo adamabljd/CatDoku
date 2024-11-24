@@ -635,6 +635,33 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     return true;
   };
 
+  // To make sure only 1 solution is correct
+  const getSolutionCount = (grid) => {
+    let solutionCount = 0;
+  
+    const solve = (grid) => {
+      for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+          if (grid[row][col] === null) {
+            for (let num = 1; num <= 9; num++) {
+              if (isValidPlacement(grid, row, col, num)) {
+                grid[row][col] = num;
+                solve(grid);
+                grid[row][col] = null; // Backtrack
+              }
+            }
+            return; // Stop recursion if empty cell remains
+          }
+        }
+      }
+      solutionCount++;
+    };
+  
+    solve(JSON.parse(JSON.stringify(grid))); // Deep copy the grid
+    return solutionCount;
+  };
+  
+
   // Function to fill some cells with random numbers while ensuring uniqueness in rows, columns, and subgrids
   const fillGridWithRandomNumbers = (difficulty) => {
     const newGrid = Array(9)
@@ -737,8 +764,18 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
             } else {
               // Remove the cell to stay within the limit for this subgrid
               const { row, col } = shuffledSubGridCells[i];
+              const temp = newGrid[row][col];
               newGrid[row][col] = null;
               newInitialGrid[row][col] = false; // Mark it as editable by the player
+
+              const solutionCount = getSolutionCount(newGrid);
+              console.log(`After removing cell (${row}, ${col}), solution count: ${solutionCount}`);
+
+              if (solutionCount !== 1) {
+                // Restore if the puzzle becomes ambiguous
+                newGrid[row][col] = temp;
+                newInitialGrid[row][col] = true;
+              }
             }
           }
         }
