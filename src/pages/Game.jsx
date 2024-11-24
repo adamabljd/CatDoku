@@ -478,6 +478,25 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         // Normal mode: handle mistakes and correct answers
         newNotesGrid[row][col] = [];
         newGrid[selectedCell.row][selectedCell.col] = number;
+        
+        // Remove this number from notes in the same row, column, and block
+        for (let i = 0; i < 9; i++) {
+          // Remove from the row
+          newNotesGrid[row][i] = newNotesGrid[row][i]?.filter((n) => n !== number);
+
+          // Remove from the column
+          newNotesGrid[i][col] = newNotesGrid[i][col]?.filter((n) => n !== number);
+        }
+
+        // Remove from the 3x3 block
+        const startRow = Math.floor(row / 3) * 3;
+        const startCol = Math.floor(col / 3) * 3;
+        for (let r = startRow; r < startRow + 3; r++) {
+          for (let c = startCol; c < startCol + 3; c++) {
+            newNotesGrid[r][c] = newNotesGrid[r][c]?.filter((n) => n !== number);
+          }
+        }
+
         checkUserSelection(selectedCell.row, selectedCell.col, number);
       }
       setNotesGrid(newNotesGrid);
@@ -638,7 +657,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   // To make sure only 1 solution is correct
   const getSolutionCount = (grid) => {
     let solutionCount = 0;
-  
+
     const solve = (grid) => {
       for (let row = 0; row < 9; row++) {
         for (let col = 0; col < 9; col++) {
@@ -656,11 +675,11 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
       }
       solutionCount++;
     };
-  
+
     solve(JSON.parse(JSON.stringify(grid))); // Deep copy the grid
     return solutionCount;
   };
-  
+
 
   // Function to fill some cells with random numbers while ensuring uniqueness in rows, columns, and subgrids
   const fillGridWithRandomNumbers = (difficulty) => {
