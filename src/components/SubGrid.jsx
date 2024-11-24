@@ -16,12 +16,12 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
   const [fadeInBg, setFadeInBg] = useState(false);
 
   useEffect(() => {
-      setTimeout(() => setFadeInBg(true), 1200);
-      setTimeout(() => {
-        setFadeIn(true);
-        setInitialLoad(false);
-      }, 1000);
-    
+    setTimeout(() => setFadeInBg(true), 1200);
+    setTimeout(() => {
+      setFadeIn(true);
+      setInitialLoad(false);
+    }, 1000);
+
   }, []);
 
   return (
@@ -32,7 +32,11 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
         // Check if the current cell is in the selected row or column
         const isRowSelected = selectedCell && selectedCell.row === row;
         const isColSelected = selectedCell && selectedCell.col === col;
-        const isHighlighted = isRowSelected || isColSelected;
+        const isBlockSelected =
+          selectedCell &&
+          Math.floor(selectedCell.row / 3) === Math.floor(row / 3) &&
+          Math.floor(selectedCell.col / 3) === Math.floor(col / 3);
+        const isHighlighted = isRowSelected || isColSelected || isBlockSelected;
 
         const isSelectedCell = selectedCell && selectedCell.row === row && selectedCell.col === col;
 
@@ -45,10 +49,10 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
           <div
             key={index}
             className={`cell w-full h-full max-w-12 max-h-10  xl:max-w-16 xl:max-h-14 aspect-square border border-gray-300 flex items-center justify-center 
-              ${isSelectedCell ? "bg-blue-300" : ""}
+              ${isSelectedCell ? "bg-orange-300" : ""}
               ${isMistakenCell ? "bg-red-300" : ""}
               ${isCorrectCell ? "bg-green-300" : ""} 
-              ${isHighlighted ? "bg-yellow-200" : ""}
+              ${isHighlighted && !isMistakenCell && !isSelectedCell ? "bg-yellow-200" : ""}
               ${!isPaused && !isLocked && !isCorrectCell ? "hover:cursor-pointer" : ""} 
               ${isHighlightedNumber ? "bg-purple-300" : ""}
               ${isPaused ? "bg-white" : ""}
@@ -58,7 +62,7 @@ const SubGrid = ({ subGrid, onCellClick, selectedCell, mistakenCells, correctCel
             onClick={() => !isLocked && onCellClick(row, col)}
           >
 
-            { notesGrid[row][col].length ? (
+            {notesGrid[row][col].length ? (
               <div className="grid grid-cols-3 w-full h-full">
                 {notesGrid[row][col].map((note, i) => (
                   <img key={i} src={catImages[note]} alt={`Cat note ${note}`} className={`w-fit h-fit aspect-square ${isPaused ? "invisible" : ""}`} />
