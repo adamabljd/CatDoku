@@ -498,560 +498,562 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         newNotesGrid[row][col] = [];
         newGrid[selectedCell.row][selectedCell.col] = number;
 
-        // Remove this number from notes in the same row, column, and block
-        for (let i = 0; i < 9; i++) {
-          // Remove from the row
-          newNotesGrid[row][i] = newNotesGrid[row][i]?.filter((n) => n !== number);
+        const correctNumber = solutionGrid[row][col];
+        if (number === correctNumber) {
+          // Remove the matching number from notes in the same row, column, and block
+          for (let i = 0; i < 9; i++) {
+            // Remove the matching number from the row
+            newNotesGrid[row][i] = newNotesGrid[row][i]?.filter((n) => n !== number);
 
-          // Remove from the column
-          newNotesGrid[i][col] = newNotesGrid[i][col]?.filter((n) => n !== number);
-        }
+            // Remove the matching number from the column
+            newNotesGrid[i][col] = newNotesGrid[i][col]?.filter((n) => n !== number);
+          }
 
-        // Remove from the 3x3 block
-        const startRow = Math.floor(row / 3) * 3;
-        const startCol = Math.floor(col / 3) * 3;
-        for (let r = startRow; r < startRow + 3; r++) {
-          for (let c = startCol; c < startCol + 3; c++) {
-            newNotesGrid[r][c] = newNotesGrid[r][c]?.filter((n) => n !== number);
+          // Remove from the 3x3 block
+          const startRow = Math.floor(row / 3) * 3;
+          const startCol = Math.floor(col / 3) * 3;
+          for (let r = startRow; r < startRow + 3; r++) {
+            for (let c = startCol; c < startCol + 3; c++) {
+              newNotesGrid[r][c] = newNotesGrid[r][c]?.filter((n) => n !== number);
+            }
           }
         }
-
-        checkUserSelection(selectedCell.row, selectedCell.col, number);
-      }
-      setNotesGrid(newNotesGrid);
-      setGrid(newGrid);
-      if (!isNotesMode) {
-        checkIfGameWon(newGrid);
-      }
-    } else {
-      setHighlightedNumber(number)
-    }
-  };
-
-  // Function to handle the erase button click
-  const handleEraseClick = () => {
-    if (selectedCell) {
-      const newGrid = [...grid];
-      newGrid[selectedCell.row][selectedCell.col] = null; // Clear the selected cell's value
-      setGrid(newGrid);
-      setSelectedCell(null); // Deselect after erasing
-      setIsSelected(false);
-
-      // Remove from both mistaken and correct cells
-      setMistakenCells((prev) =>
-        prev.filter(
-          (cell) =>
-            !(cell.row === selectedCell.row && cell.col === selectedCell.col)
-        )
-      );
-      setCorrectCells((prev) =>
-        prev.filter(
-          (cell) =>
-            !(cell.row === selectedCell.row && cell.col === selectedCell.col)
-        )
-      );
-    }
-  };
-
-  const toggleNotesMode = () => {
-    setIsNotesMode((prev) => !prev);
-  };
-
-  // Function to check if the entire grid is correctly filled
-  const checkIfGameWon = async (grid) => {
-    // Check if any cells contain a note (not fully completed)
-    for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
-        if (typeof grid[row][col] === "string" && grid[row][col].includes("(")) {
-          return; // Exit: can't win with notes in the grid
+          checkUserSelection(selectedCell.row, selectedCell.col, number);
         }
+        setNotesGrid(newNotesGrid);
+        setGrid(newGrid);
+        if (!isNotesMode) {
+          checkIfGameWon(newGrid);
+        }
+      } else {
+        setHighlightedNumber(number)
       }
-    }
-
-    // Helper to check if an array contains numbers 1-9 without duplicates
-    const isValidSet = (arr) => {
-      const set = new Set(arr);
-      return set.size === 9 && !set.has(null);
     };
 
-    // Check all rows
-    for (let row = 0; row < 9; row++) {
-      if (!isValidSet(grid[row])) {
-        return false;
-      }
-    }
+    // Function to handle the erase button click
+    const handleEraseClick = () => {
+      if (selectedCell) {
+        const newGrid = [...grid];
+        newGrid[selectedCell.row][selectedCell.col] = null; // Clear the selected cell's value
+        setGrid(newGrid);
+        setSelectedCell(null); // Deselect after erasing
+        setIsSelected(false);
 
-    // Check all columns
-    for (let col = 0; col < 9; col++) {
-      const column = grid.map((row) => row[col]);
-      if (!isValidSet(column)) {
-        return false;
+        // Remove from both mistaken and correct cells
+        setMistakenCells((prev) =>
+          prev.filter(
+            (cell) =>
+              !(cell.row === selectedCell.row && cell.col === selectedCell.col)
+          )
+        );
+        setCorrectCells((prev) =>
+          prev.filter(
+            (cell) =>
+              !(cell.row === selectedCell.row && cell.col === selectedCell.col)
+          )
+        );
       }
-    }
+    };
 
-    // Check all 3x3 subgrids
-    for (let subGridRow = 0; subGridRow < 3; subGridRow++) {
-      for (let subGridCol = 0; subGridCol < 3; subGridCol++) {
-        const subGrid = [];
-        for (let row = 0; row < 3; row++) {
-          for (let col = 0; col < 3; col++) {
-            subGrid.push(grid[subGridRow * 3 + row][subGridCol * 3 + col]);
+    const toggleNotesMode = () => {
+      setIsNotesMode((prev) => !prev);
+    };
+
+    // Function to check if the entire grid is correctly filled
+    const checkIfGameWon = async (grid) => {
+      // Check if any cells contain a note (not fully completed)
+      for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+          if (typeof grid[row][col] === "string" && grid[row][col].includes("(")) {
+            return; // Exit: can't win with notes in the grid
           }
         }
-        if (!isValidSet(subGrid)) {
+      }
+
+      // Helper to check if an array contains numbers 1-9 without duplicates
+      const isValidSet = (arr) => {
+        const set = new Set(arr);
+        return set.size === 9 && !set.has(null);
+      };
+
+      // Check all rows
+      for (let row = 0; row < 9; row++) {
+        if (!isValidSet(grid[row])) {
           return false;
         }
       }
-    }
 
-    setHideControls(true);
+      // Check all columns
+      for (let col = 0; col < 9; col++) {
+        const column = grid.map((row) => row[col]);
+        if (!isValidSet(column)) {
+          return false;
+        }
+      }
 
-    // If all checks pass, set game won to true
-    setTimeout(async () => {
-      await captureGridAsImage();
-      await checkAndSetBestTime();
-      await incrementWinCount();
-      setGameWon(true);
-      loadStats();
-    }, 10);
-  };
+      // Check all 3x3 subgrids
+      for (let subGridRow = 0; subGridRow < 3; subGridRow++) {
+        for (let subGridCol = 0; subGridCol < 3; subGridCol++) {
+          const subGrid = [];
+          for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+              subGrid.push(grid[subGridRow * 3 + row][subGridCol * 3 + col]);
+            }
+          }
+          if (!isValidSet(subGrid)) {
+            return false;
+          }
+        }
+      }
 
-  // Function to check and update best time for the current difficulty and max mistakes setting
-  const checkAndSetBestTime = async () => {
-    const key = `bestTime_${difficulty}_${maxMistakes}`;
-    const bestTimeData = await Storage.get({ key });
-    const bestTime = bestTimeData.value && bestTimeData.value !== "0"
-      ? parseInt(bestTimeData.value, 10)
-      : Infinity;
+      setHideControls(true);
 
-    if (timer < bestTime) {
+      // If all checks pass, set game won to true
+      setTimeout(async () => {
+        await captureGridAsImage();
+        await checkAndSetBestTime();
+        await incrementWinCount();
+        setGameWon(true);
+        loadStats();
+      }, 10);
+    };
+
+    // Function to check and update best time for the current difficulty and max mistakes setting
+    const checkAndSetBestTime = async () => {
+      const key = `bestTime_${difficulty}_${maxMistakes}`;
+      const bestTimeData = await Storage.get({ key });
+      const bestTime = bestTimeData.value && bestTimeData.value !== "0"
+        ? parseInt(bestTimeData.value, 10)
+        : Infinity;
+
+      if (timer < bestTime) {
+        try {
+          await Storage.set({ key, value: JSON.stringify(timer) });
+          setBestTime(timer)
+        } catch (error) {
+          console.error("Failed to save 'grid' to storage:", error);
+        }
+      }
+    };
+
+    // Function to increment win count in storage
+    const incrementWinCount = async () => {
+      const key = `winCount_${difficulty}_${maxMistakes}`;
+      const winData = await Storage.get({ key });
+      const winCount = winData.value ? JSON.parse(winData.value) : 0;
+
+      setTotalWins(winCount + 1)
       try {
-        await Storage.set({ key, value: JSON.stringify(timer) });
-        setBestTime(timer)
+        await Storage.set({ key, value: JSON.stringify(winCount + 1) });
       } catch (error) {
         console.error("Failed to save 'grid' to storage:", error);
       }
-    }
-  };
 
-  // Function to increment win count in storage
-  const incrementWinCount = async () => {
-    const key = `winCount_${difficulty}_${maxMistakes}`;
-    const winData = await Storage.get({ key });
-    const winCount = winData.value ? JSON.parse(winData.value) : 0;
+    };
 
-    setTotalWins(winCount + 1)
-    try {
-      await Storage.set({ key, value: JSON.stringify(winCount + 1) });
-    } catch (error) {
-      console.error("Failed to save 'grid' to storage:", error);
-    }
-
-  };
-
-  //------------------------------ GAME'S CORE MECANICS ----------------------------------------------
-  // Function to check if a number can be placed in a cell
-  const isValidPlacement = (grid, row, col, number) => {
-    // Check the row for the number
-    for (let i = 0; i < 9; i++) {
-      if (grid[row][i] === number) return false;
-    }
-    // Check the column for the number
-    for (let i = 0; i < 9; i++) {
-      if (grid[i][col] === number) return false;
-    }
-
-    const startRow = Math.floor(row / 3) * 3;
-    const startCol = Math.floor(col / 3) * 3;
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-        if (grid[startRow + i][startCol + j] === number) {
-          return false;
-        }
+    //------------------------------ GAME'S CORE MECANICS ----------------------------------------------
+    // Function to check if a number can be placed in a cell
+    const isValidPlacement = (grid, row, col, number) => {
+      // Check the row for the number
+      for (let i = 0; i < 9; i++) {
+        if (grid[row][i] === number) return false;
       }
-    }
-    return true;
-  };
+      // Check the column for the number
+      for (let i = 0; i < 9; i++) {
+        if (grid[i][col] === number) return false;
+      }
 
-  // To make sure only 1 solution is correct
-  const getSolutionCount = (grid) => {
-    let solutionCount = 0;
-
-    const solve = (grid) => {
-      for (let row = 0; row < 9; row++) {
-        for (let col = 0; col < 9; col++) {
-          if (grid[row][col] === null) {
-            for (let num = 1; num <= 9; num++) {
-              if (isValidPlacement(grid, row, col, num)) {
-                grid[row][col] = num;
-                solve(grid);
-                grid[row][col] = null; // Backtrack
-              }
-            }
-            return; // Stop recursion if empty cell remains
+      const startRow = Math.floor(row / 3) * 3;
+      const startCol = Math.floor(col / 3) * 3;
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          if (grid[startRow + i][startCol + j] === number) {
+            return false;
           }
         }
       }
-      solutionCount++;
+      return true;
     };
 
-    solve(JSON.parse(JSON.stringify(grid))); // Deep copy the grid
-    return solutionCount;
-  };
+    // To make sure only 1 solution is correct
+    const getSolutionCount = (grid) => {
+      let solutionCount = 0;
 
-
-  // Function to fill some cells with random numbers while ensuring uniqueness in rows, columns, and subgrids
-  const fillGridWithRandomNumbers = (difficulty) => {
-    const newGrid = Array(9)
-      .fill(null)
-      .map(() => Array(9).fill(null));
-
-    const newInitialGrid = Array(9)
-      .fill(null)
-      .map(() => Array(9).fill(false));
-
-    let maxFilledCells, minFilledCells, fillChance;
-    switch (difficulty) {
-      case "Easy":
-        maxFilledCells = 8;
-        minFilledCells = 5;
-        fillChance = 0.8;
-        break;
-      case "Medium":
-        maxFilledCells = 7;
-        minFilledCells = 4;
-        fillChance = 0.8;
-        break;
-      case "Hard":
-        maxFilledCells = 6;
-        minFilledCells = 3;
-        fillChance = 0.6;
-        break;
-      case "Expert":
-        maxFilledCells = 5;
-        minFilledCells = 2;
-        fillChance = 0.4;
-        break;
-      case "Master":
-        maxFilledCells = 4;
-        minFilledCells = 1;
-        fillChance = 0.3;
-        break;
-      default:
-        maxFilledCells = 8;
-        minFilledCells = 4;
-        fillChance = 0.6;
-        break;
-    }
-
-    const shuffle = (array) => {
-      return array.sort(() => Math.random() - 0.5);
-    };
-
-    // Backtracking algorithm to fill the grid
-    const fillGrid = (grid) => {
-      for (let row = 0; row < 9; row++) {
-        for (let col = 0; col < 9; col++) {
-          if (grid[row][col] === null) {
-            const numbers = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-            for (let num of numbers) {
-              if (isValidPlacement(grid, row, col, num)) {
-                grid[row][col] = num;
-                if (fillGrid(grid)) {
-                  return true; // Continue filling
+      const solve = (grid) => {
+        for (let row = 0; row < 9; row++) {
+          for (let col = 0; col < 9; col++) {
+            if (grid[row][col] === null) {
+              for (let num = 1; num <= 9; num++) {
+                if (isValidPlacement(grid, row, col, num)) {
+                  grid[row][col] = num;
+                  solve(grid);
+                  grid[row][col] = null; // Backtrack
                 }
-                grid[row][col] = null; // Backtrack
               }
-            }
-            return false; // No valid number found, trigger backtracking
-          }
-        }
-      }
-      return true; // Grid fully filled
-    };
-
-    // Fill the grid using the backtracking algorithm
-    fillGrid(newGrid);
-    setSolutionGrid(JSON.parse(JSON.stringify(newGrid)));
-
-    // Function to remove numbers to create the puzzle while enforcing subgrid limits
-    const removeNumbers = () => {
-      for (let subGridRow = 0; subGridRow < 3; subGridRow++) {
-        for (let subGridCol = 0; subGridCol < 3; subGridCol++) {
-          const cellsToKeep =
-            Math.floor(Math.random() * (maxFilledCells - minFilledCells + 1)) +
-            minFilledCells;
-          const subGridCells = [];
-
-          // Collect all cells in the subgrid
-          for (let row = 0; row < 3; row++) {
-            for (let col = 0; col < 3; col++) {
-              const actualRow = subGridRow * 3 + row;
-              const actualCol = subGridCol * 3 + col;
-              subGridCells.push({ row: actualRow, col: actualCol });
-            }
-          }
-
-          // Shuffle the subgrid cells and remove the ones we don't want to keep
-          const shuffledSubGridCells = shuffle(subGridCells);
-          let filledCount = 0;
-          for (let i = 0; i < 9; i++) {
-            if (filledCount < cellsToKeep && Math.random() < fillChance) {
-              filledCount++;
-              // Leave the cell filled
-            } else {
-              // Remove the cell to stay within the limit for this subgrid
-              const { row, col } = shuffledSubGridCells[i];
-              const temp = newGrid[row][col];
-              newGrid[row][col] = null;
-              newInitialGrid[row][col] = false; // Mark it as editable by the player
-
-              const solutionCount = getSolutionCount(newGrid);
-              console.log(`After removing cell (${row}, ${col}), solution count: ${solutionCount}`);
-
-              if (solutionCount !== 1) {
-                // Restore if the puzzle becomes ambiguous
-                newGrid[row][col] = temp;
-                newInitialGrid[row][col] = true;
-              }
+              return; // Stop recursion if empty cell remains
             }
           }
         }
-      }
-    };
-
-    removeNumbers(); // Create the puzzle by removing numbers from the filled grid
-
-    // After removing numbers, mark the remaining ones as locked
-    for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
-        if (newGrid[row][col] !== null) {
-          newInitialGrid[row][col] = true; // These cells are pre-filled and should be locked
-        }
-      }
-    }
-
-    // Update the state with the new grid and initial grid (locked cells)
-    setGrid(newGrid);
-    setInitialGrid(newInitialGrid); // Tracks locked cells
-  };
-
-  const checkUserSelection = (row, col, selectedNumber) => {
-    const correctNumber = solutionGrid[row][col];
-
-    if (selectedNumber !== correctNumber) {
-      setMistakes((prev) => prev + 1);
-      setCorrectCells((prev) =>
-        prev.filter((cell) => !(cell.row === row && cell.col === col))
-      );
-      setSelectedCell(null);
-      setMistakenCells((prev) => [...prev, { row, col }]);
-      triggerVibration();
-      if (mistakes + 1 >= maxMistakes) {
-        setGameOver(true);
-      }
-    } else {
-      setMistakenCells((prev) =>
-        prev.filter((cell) => !(cell.row === row && cell.col === col))
-      );
-      setSelectedCell(null);
-      setIsSelected(false);
-      setCorrectCells((prev) => [...prev, { row, col }]);
-      playCorrectSound();
-    }
-  };
-
-  const revealNumber = () => {
-    const emptyCells = [];
-
-    // Collect all empty cells
-    grid.forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        if (cell === null) {
-          emptyCells.push({ row: rowIndex, col: colIndex });
-        }
-      });
-    });
-
-    // Choose a random empty cell if there are any
-    if (emptyCells.length > 0) {
-      const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-      const { row, col } = randomCell;
-      const correctNumber = solutionGrid[row][col]; // Get the correct number from solutionGrid
-
-      const newGrid = [...grid];
-      const newNotesGrid = [...notesGrid];
-      newGrid[row][col] = correctNumber;
-      newNotesGrid[row][col] = [];
-
-      setGrid(newGrid);
-      setNotesGrid(newNotesGrid);
-      setCorrectCells([...correctCells, { row, col }]);
-      checkIfGameWon(newGrid)
-    }
-  };
-
-  // Global click listener to reset highlightedNumber
-  useEffect(() => {
-    const handleGlobalClick = (event) => {
-      const isClickInsideCatsRow = event.target.closest('.cats-row');
-      if (!isClickInsideCatsRow) {
-        setHighlightedNumber(null); // Reset only if clicking outside CatsRow
-      }
-    };
-
-    document.addEventListener("click", handleGlobalClick);
-    return () => document.removeEventListener("click", handleGlobalClick);
-  }, []);
-
-  const handleReturnToMenu = () => {
-    navigate("/");
-  };
-
-  const showBannerAd = async () => {
-    try {
-      switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
-        case 'android':
-          await AdMob.showBanner({
-            // adId: 'ca-app-pub-7381288019033542/1651953082',
-            adId: bannerTest,
-            position: BannerAdPosition.BOTTOM_CENTER,
-            size: BannerAdSize.ADAPTIVE_BANNER,
-          });
-          break;
-
-        case 'ios':
-          await AdMob.showBanner({
-            adId: 'ca-app-pub-7381288019033542/6597598946',
-            // adId: bannerTest,
-            position: BannerAdPosition.BOTTOM_CENTER,
-            size: BannerAdSize.ADAPTIVE_BANNER,
-          });
-          break;
-
-        case 'test':
-          await AdMob.showBanner({
-            adId: bannerTest,
-            position: BannerAdPosition.BOTTOM_CENTER,
-            size: BannerAdSize.ADAPTIVE_BANNER,
-          });
-          break;
-
-        default:
-          console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
-          break;
-      }
-    } catch (error) {
-      console.error('AdMob banner failed:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === 'test') {
-      AdMob.removeBanner().then(() => {
-        showBannerAd();
-      }).catch((error) => console.error("Failed to remove AdMob banner:", error));
-
-      return () => {
-        AdMob.removeBanner();
+        solutionCount++;
       };
+
+      solve(JSON.parse(JSON.stringify(grid))); // Deep copy the grid
+      return solutionCount;
+    };
+
+
+    // Function to fill some cells with random numbers while ensuring uniqueness in rows, columns, and subgrids
+    const fillGridWithRandomNumbers = (difficulty) => {
+      const newGrid = Array(9)
+        .fill(null)
+        .map(() => Array(9).fill(null));
+
+      const newInitialGrid = Array(9)
+        .fill(null)
+        .map(() => Array(9).fill(false));
+
+      let maxFilledCells, minFilledCells, fillChance;
+      switch (difficulty) {
+        case "Easy":
+          maxFilledCells = 8;
+          minFilledCells = 5;
+          fillChance = 0.8;
+          break;
+        case "Medium":
+          maxFilledCells = 7;
+          minFilledCells = 4;
+          fillChance = 0.8;
+          break;
+        case "Hard":
+          maxFilledCells = 6;
+          minFilledCells = 3;
+          fillChance = 0.6;
+          break;
+        case "Expert":
+          maxFilledCells = 5;
+          minFilledCells = 2;
+          fillChance = 0.4;
+          break;
+        case "Master":
+          maxFilledCells = 4;
+          minFilledCells = 1;
+          fillChance = 0.3;
+          break;
+        default:
+          maxFilledCells = 8;
+          minFilledCells = 4;
+          fillChance = 0.6;
+          break;
+      }
+
+      const shuffle = (array) => {
+        return array.sort(() => Math.random() - 0.5);
+      };
+
+      // Backtracking algorithm to fill the grid
+      const fillGrid = (grid) => {
+        for (let row = 0; row < 9; row++) {
+          for (let col = 0; col < 9; col++) {
+            if (grid[row][col] === null) {
+              const numbers = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+              for (let num of numbers) {
+                if (isValidPlacement(grid, row, col, num)) {
+                  grid[row][col] = num;
+                  if (fillGrid(grid)) {
+                    return true; // Continue filling
+                  }
+                  grid[row][col] = null; // Backtrack
+                }
+              }
+              return false; // No valid number found, trigger backtracking
+            }
+          }
+        }
+        return true; // Grid fully filled
+      };
+
+      // Fill the grid using the backtracking algorithm
+      fillGrid(newGrid);
+      setSolutionGrid(JSON.parse(JSON.stringify(newGrid)));
+
+      // Function to remove numbers to create the puzzle while enforcing subgrid limits
+      const removeNumbers = () => {
+        for (let subGridRow = 0; subGridRow < 3; subGridRow++) {
+          for (let subGridCol = 0; subGridCol < 3; subGridCol++) {
+            const cellsToKeep =
+              Math.floor(Math.random() * (maxFilledCells - minFilledCells + 1)) +
+              minFilledCells;
+            const subGridCells = [];
+
+            // Collect all cells in the subgrid
+            for (let row = 0; row < 3; row++) {
+              for (let col = 0; col < 3; col++) {
+                const actualRow = subGridRow * 3 + row;
+                const actualCol = subGridCol * 3 + col;
+                subGridCells.push({ row: actualRow, col: actualCol });
+              }
+            }
+
+            // Shuffle the subgrid cells and remove the ones we don't want to keep
+            const shuffledSubGridCells = shuffle(subGridCells);
+            let filledCount = 0;
+            for (let i = 0; i < 9; i++) {
+              if (filledCount < cellsToKeep && Math.random() < fillChance) {
+                filledCount++;
+                // Leave the cell filled
+              } else {
+                // Remove the cell to stay within the limit for this subgrid
+                const { row, col } = shuffledSubGridCells[i];
+                const temp = newGrid[row][col];
+                newGrid[row][col] = null;
+                newInitialGrid[row][col] = false; // Mark it as editable by the player
+
+                const solutionCount = getSolutionCount(newGrid);
+                console.log(`After removing cell (${row}, ${col}), solution count: ${solutionCount}`);
+
+                if (solutionCount !== 1) {
+                  // Restore if the puzzle becomes ambiguous
+                  newGrid[row][col] = temp;
+                  newInitialGrid[row][col] = true;
+                }
+              }
+            }
+          }
+        }
+      };
+
+      removeNumbers(); // Create the puzzle by removing numbers from the filled grid
+
+      // After removing numbers, mark the remaining ones as locked
+      for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+          if (newGrid[row][col] !== null) {
+            newInitialGrid[row][col] = true; // These cells are pre-filled and should be locked
+          }
+        }
+      }
+
+      // Update the state with the new grid and initial grid (locked cells)
+      setGrid(newGrid);
+      setInitialGrid(newInitialGrid); // Tracks locked cells
+    };
+
+    const checkUserSelection = (row, col, selectedNumber) => {
+      const correctNumber = solutionGrid[row][col];
+
+      if (selectedNumber !== correctNumber) {
+        setMistakes((prev) => prev + 1);
+        setCorrectCells((prev) =>
+          prev.filter((cell) => !(cell.row === row && cell.col === col))
+        );
+        setSelectedCell(null);
+        setMistakenCells((prev) => [...prev, { row, col }]);
+        triggerVibration();
+        if (mistakes + 1 >= maxMistakes) {
+          setGameOver(true);
+        }
+      } else {
+        setMistakenCells((prev) =>
+          prev.filter((cell) => !(cell.row === row && cell.col === col))
+        );
+        setSelectedCell(null);
+        setIsSelected(false);
+        setCorrectCells((prev) => [...prev, { row, col }]);
+        playCorrectSound();
+      }
+    };
+
+    const revealNumber = () => {
+      const emptyCells = [];
+
+      // Collect all empty cells
+      grid.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+          if (cell === null) {
+            emptyCells.push({ row: rowIndex, col: colIndex });
+          }
+        });
+      });
+
+      // Choose a random empty cell if there are any
+      if (emptyCells.length > 0) {
+        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        const { row, col } = randomCell;
+        const correctNumber = solutionGrid[row][col]; // Get the correct number from solutionGrid
+
+        const newGrid = [...grid];
+        const newNotesGrid = [...notesGrid];
+        newGrid[row][col] = correctNumber;
+        newNotesGrid[row][col] = [];
+
+        setGrid(newGrid);
+        setNotesGrid(newNotesGrid);
+        setCorrectCells([...correctCells, { row, col }]);
+        checkIfGameWon(newGrid)
+      }
+    };
+
+    // Global click listener to reset highlightedNumber
+    useEffect(() => {
+      const handleGlobalClick = (event) => {
+        const isClickInsideCatsRow = event.target.closest('.cats-row');
+        if (!isClickInsideCatsRow) {
+          setHighlightedNumber(null); // Reset only if clicking outside CatsRow
+        }
+      };
+
+      document.addEventListener("click", handleGlobalClick);
+      return () => document.removeEventListener("click", handleGlobalClick);
+    }, []);
+
+    const handleReturnToMenu = () => {
+      navigate("/");
+    };
+
+    const showBannerAd = async () => {
+      try {
+        switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
+          case 'android':
+            await AdMob.showBanner({
+              // adId: 'ca-app-pub-7381288019033542/1651953082',
+              adId: bannerTest,
+              position: BannerAdPosition.BOTTOM_CENTER,
+              size: BannerAdSize.ADAPTIVE_BANNER,
+            });
+            break;
+
+          case 'ios':
+            await AdMob.showBanner({
+              adId: 'ca-app-pub-7381288019033542/6597598946',
+              // adId: bannerTest,
+              position: BannerAdPosition.BOTTOM_CENTER,
+              size: BannerAdSize.ADAPTIVE_BANNER,
+            });
+            break;
+
+          case 'test':
+            await AdMob.showBanner({
+              adId: bannerTest,
+              position: BannerAdPosition.BOTTOM_CENTER,
+              size: BannerAdSize.ADAPTIVE_BANNER,
+            });
+            break;
+
+          default:
+            console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
+            break;
+        }
+      } catch (error) {
+        console.error('AdMob banner failed:', error);
+      }
+    };
+
+    useEffect(() => {
+      if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === 'test') {
+        AdMob.removeBanner().then(() => {
+          showBannerAd();
+        }).catch((error) => console.error("Failed to remove AdMob banner:", error));
+
+        return () => {
+          AdMob.removeBanner();
+        };
+      }
+    }, []);
+
+
+    if (!isLoaded) {
+      return <LoadingScreen />;
     }
-  }, []);
 
+    return (
+      <div className="space-y-5 mt-5 landscape:pb-32">
+        {loadingAd && (
+          <div className="fixed inset-0 z-50 bg-beige flex justify-center items-center">
+            <LoadingScreen />
+          </div>
+        )}
+        {/* Render based on explicit checks */}
+        {isLoaded && gameOver && !gameWon ? (
+          <GameLost mistakes={mistakes} setMistakes={setMistakes} setGameOver={setGameOver} setLoadingAd={setLoadingAd} setIsAd={setIsAd} />
+        ) : isLoaded && gameWon && !gameOver ? (
+          <GameWon imageURL={imageURL} bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} soundEnabled={soundEnabled} />
 
-  if (!isLoaded) {
-    return <LoadingScreen />;
-  }
-
-  return (
-    <div className="space-y-5 mt-5 landscape:pb-32">
-      {loadingAd && (
-        <div className="fixed inset-0 z-50 bg-beige flex justify-center items-center">
-          <LoadingScreen />
-        </div>
-      )}
-      {/* Render based on explicit checks */}
-      {isLoaded && gameOver && !gameWon ? (
-        <GameLost mistakes={mistakes} setMistakes={setMistakes} setGameOver={setGameOver} setLoadingAd={setLoadingAd} setIsAd={setIsAd} />
-      ) : isLoaded && gameWon && !gameOver ? (
-        <GameWon imageURL={imageURL} bestTime={bestTime ? formatTime(bestTime) : "N/A"} time={formatTime(timer)} mistakes={mistakes} maxMistakes={maxMistakes} difficulty={difficulty} totalWins={totalWins} soundEnabled={soundEnabled} />
-
-      ) : (
-        (
-          <>
-            {!hideControls && (
-              <div
-                className={`relative z-10 transition-all duration-500 ease-out ${animateGameBar ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
-                  }`}
-              >
-                <GameBar
-                  difficulty={difficulty}
-                  mistakes={mistakes}
-                  timer={formatTime(timer)}
-                  isPaused={isPaused}
-                  onPauseToggle={togglePause}
-                  onRestart={onRestart}
-                  mistakesAllowed={maxMistakes}
-                  soundEnabled={soundEnabled}
-                  setSoundEnabled={setSoundEnabled}
-                  vibrationEnabled={vibrationEnabled}
-                  setVibrationEnabled={setVibrationEnabled}
-                />
-              </div>
-            )}
-            <div
-              ref={gridRef} className={`flex items-center justify-center transition-all duration-500 ease-out ${animateGrid ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-                }`}>
-              <Grid
-                grid={grid}
-                notesGrid={notesGrid}
-                initialGrid={initialGrid}
-                selectedCell={selectedCell}
-                mistakenCells={mistakenCells}
-                correctCells={correctCells}
-                onCellClick={handleCellClick}
-                isPaused={isPaused}
-                highlightedNumber={highlightedNumber}
-              />
-            </div>
-            {!hideControls && (
-              <div
-                className={`transition-all duration-500 ease-out ${animateCatsRow ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
-                  }`}
-              >
-                <CatsRow
-                  onNumberClick={handleNumberClick}
-                  isSelected={isSelected}
-                  onEraseClick={handleEraseClick}
-                  isNotesMode={isNotesMode}
-                  toggleNotesMode={toggleNotesMode}
-                  revealNumber={revealNumber}
-                  freeHintUsed={freeHintUsed}
-                  setFreeHintUsed={setFreeHintUsed}
-                  setLoadingAd={setLoadingAd}
-                  setIsAd={setIsAd}
-                />
-              </div>
-            )}
-            {!hideControls && (
-              <div
-                className={`flex items-center justify-center mt-4 mb-5 transition-opacity duration-500 ease-out ${animateButton ? "opacity-100" : "opacity-0"
-                  }`}
-              >
-                <button
-                  className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
-                  onClick={handleReturnToMenu}
+        ) : (
+          (
+            <>
+              {!hideControls && (
+                <div
+                  className={`relative z-10 transition-all duration-500 ease-out ${animateGameBar ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+                    }`}
                 >
-                  <img src={houseLogo} alt="house" className="h-7 w-7" />
-                </button>
+                  <GameBar
+                    difficulty={difficulty}
+                    mistakes={mistakes}
+                    timer={formatTime(timer)}
+                    isPaused={isPaused}
+                    onPauseToggle={togglePause}
+                    onRestart={onRestart}
+                    mistakesAllowed={maxMistakes}
+                    soundEnabled={soundEnabled}
+                    setSoundEnabled={setSoundEnabled}
+                    vibrationEnabled={vibrationEnabled}
+                    setVibrationEnabled={setVibrationEnabled}
+                  />
+                </div>
+              )}
+              <div
+                ref={gridRef} className={`flex items-center justify-center transition-all duration-500 ease-out ${animateGrid ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+                  }`}>
+                <Grid
+                  grid={grid}
+                  notesGrid={notesGrid}
+                  initialGrid={initialGrid}
+                  selectedCell={selectedCell}
+                  mistakenCells={mistakenCells}
+                  correctCells={correctCells}
+                  onCellClick={handleCellClick}
+                  isPaused={isPaused}
+                  highlightedNumber={highlightedNumber}
+                />
               </div>
-            )}
-          </>
-        )
-      )}
-    </div>
-  );
+              {!hideControls && (
+                <div
+                  className={`transition-all duration-500 ease-out ${animateCatsRow ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+                    }`}
+                >
+                  <CatsRow
+                    onNumberClick={handleNumberClick}
+                    isSelected={isSelected}
+                    onEraseClick={handleEraseClick}
+                    isNotesMode={isNotesMode}
+                    toggleNotesMode={toggleNotesMode}
+                    revealNumber={revealNumber}
+                    freeHintUsed={freeHintUsed}
+                    setFreeHintUsed={setFreeHintUsed}
+                    setLoadingAd={setLoadingAd}
+                    setIsAd={setIsAd}
+                  />
+                </div>
+              )}
+              {!hideControls && (
+                <div
+                  className={`flex items-center justify-center mt-4 mb-5 transition-opacity duration-500 ease-out ${animateButton ? "opacity-100" : "opacity-0"
+                    }`}
+                >
+                  <button
+                    className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
+                    onClick={handleReturnToMenu}
+                  >
+                    <img src={houseLogo} alt="house" className="h-7 w-7" />
+                  </button>
+                </div>
+              )}
+            </>
+          )
+        )}
+      </div>
+    );
 
-};
+  };
 
-export default Game;
+  export default Game;
