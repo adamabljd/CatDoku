@@ -22,7 +22,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const tooltipTimeoutRef = useRef(null);
   const hintButtonRef = useRef(null);
-  
+
   const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
   const interTest = 'ca-app-pub-3940256099942544/1033173712'
   const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
@@ -57,6 +57,13 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
             await AdMob.showRewardVideoAd();
             break;
 
+          case 'test':
+            await AdMob.prepareRewardVideoAd({
+              adId: rewardedTest,
+            });
+            await AdMob.showRewardVideoAd();
+            break;
+
           default:
             setTooltipMessage("Hint feature only available on iOS and Android");
             setTooltipPosition({ top: event.clientY - 50, left: event.clientX - 30 });
@@ -87,7 +94,7 @@ const CatsRow = ({ onNumberClick, isSelected, onEraseClick, isNotesMode, toggleN
   };
 
   useEffect(() => {
-    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === 'test') {
 
       let adDismissListener, adRewardListener;
 

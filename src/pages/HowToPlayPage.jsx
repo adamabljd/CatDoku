@@ -40,6 +40,14 @@ const HowToPlayPage = () => {
                     });
                     break;
 
+                case 'test':
+                    await AdMob.showBanner({
+                        adId: bannerTest,
+                        position: BannerAdPosition.BOTTOM_CENTER,
+                        size: BannerAdSize.ADAPTIVE_BANNER,
+                    });
+                    break;
+
                 default:
                     console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
                     break;
@@ -50,7 +58,7 @@ const HowToPlayPage = () => {
     };
 
     useEffect(() => {
-        if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+        if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === 'test') {
             AdMob.removeBanner().then(() => {
                 showAd();
             }).catch((error) => console.error("Failed to remove AdMob banner:", error));

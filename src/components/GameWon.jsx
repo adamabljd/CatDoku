@@ -60,6 +60,11 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
                     await AdMob.showInterstitial();
                     adShown = true;
                     break;
+                case 'test':
+                    await AdMob.prepareInterstitial({ adId: interTest });
+                    await AdMob.showInterstitial();
+                    adShown = true;
+                    break;
                 default:
                     console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
                     break;

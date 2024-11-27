@@ -34,8 +34,6 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
 
   const showAd = async () => {
     try {
-
-
       switch (process.env.REACT_APP_ACTIVE_SYSTEM) {
         case 'android':
           await AdMob.showBanner({
@@ -55,6 +53,14 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
           });
           break;
 
+        case 'test':
+          await AdMob.showBanner({
+            adId: bannerTest,
+            position: BannerAdPosition.BOTTOM_CENTER,
+            size: "SMART_BANNER",
+          });
+          break;
+
         default:
           console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
           break;
@@ -65,7 +71,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
   };
 
   useEffect(() => {
-    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === 'test') {
       AdMob.removeBanner().then(() => {
         showAd();
       }).catch((error) => console.error("Failed to remove AdMob banner:", error));

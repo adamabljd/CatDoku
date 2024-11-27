@@ -15,10 +15,10 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
     const tooltipTimeoutRef = useRef(null);
     const extraMistakeButtonRef = useRef(null);
 
-    
-  const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
-  const interTest = 'ca-app-pub-3940256099942544/1033173712'
-  const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
+
+    const bannerTest = 'ca-app-pub-3940256099942544/6300978111'
+    const interTest = 'ca-app-pub-3940256099942544/1033173712'
+    const rewardedTest = 'ca-app-pub-3940256099942544/5224354917'
 
     const handleReturnToMenu = async () => {
         try {
@@ -32,6 +32,11 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                     break;
                 case 'ios':
                     await AdMob.prepareInterstitial({ adId: "ca-app-pub-7381288019033542/3257291179" });
+                    await AdMob.showInterstitial();
+                    adShown = true;
+                    break;
+                case 'test':
+                    await AdMob.prepareInterstitial({ adId: interTest });
                     await AdMob.showInterstitial();
                     adShown = true;
                     break;
@@ -81,6 +86,13 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                     await AdMob.showRewardVideoAd();
                     break;
 
+                case 'test':
+                    await AdMob.prepareRewardVideoAd({
+                        adId: rewardedTest
+                    });
+                    await AdMob.showRewardVideoAd();
+                    break;
+
                 default:
                     setTooltipMessage("Extra Mistake feature only available on iOS and Android");
                     setTooltipPosition({ top: event.clientY - 50, left: event.clientX - 30 });
@@ -105,7 +117,7 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
     };
 
     useEffect(() => {
-        if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+        if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === 'test') {
             let adDismissListener, adRewardListener;
 
             const addAdListeners = async () => {

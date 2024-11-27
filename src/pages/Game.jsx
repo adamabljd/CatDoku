@@ -88,6 +88,13 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
           await AdMob.showInterstitial();
           break;
 
+        case 'test':
+          await AdMob.prepareInterstitial({
+            adId: id,
+          });
+          await AdMob.showInterstitial();
+          break;
+
         default:
           console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
           break;
@@ -110,13 +117,16 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         showAd(RestartGameAdId.ios);
         // showAd(interTest)
         break;
+      case "test":
+        showAd(interTest)
+        break;
       default:
         break;
     }
   }
 
   useEffect(() => {
-    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === 'test') {
       let adDismissListener;
 
       const addAdDismissListener = async () => {
@@ -204,6 +214,9 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         case "ios":
           showAd(ResumeGameAdId.ios);
           // showAd(interTest)
+          break;
+        case "test":
+          showAd(interTest)
           break;
         default:
           break;
@@ -398,6 +411,9 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
                 showAd(TimerAdId.ios);
                 // showAd(interTest)
                 break;
+              case "test":
+                showAd(interTest)
+                break;
               default:
                 break;
             }
@@ -428,6 +444,9 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         case "ios":
           showAd(rePlayAdId.ios);
           // showAd(interTest)
+          break;
+        case "test":
+          showAd(interTest)
           break;
         default:
           break;
@@ -478,7 +497,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
         // Normal mode: handle mistakes and correct answers
         newNotesGrid[row][col] = [];
         newGrid[selectedCell.row][selectedCell.col] = number;
-        
+
         // Remove this number from notes in the same row, column, and block
         for (let i = 0; i < 9; i++) {
           // Remove from the row
@@ -695,7 +714,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
     switch (difficulty) {
       case "Easy":
         maxFilledCells = 8;
-        minFilledCells = 4;
+        minFilledCells = 5;
         fillChance = 0.8;
         break;
       case "Medium":
@@ -910,6 +929,14 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
           });
           break;
 
+        case 'test':
+          await AdMob.showBanner({
+            adId: bannerTest,
+            position: BannerAdPosition.BOTTOM_CENTER,
+            size: BannerAdSize.ADAPTIVE_BANNER,
+          });
+          break;
+
         default:
           console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
           break;
@@ -920,7 +947,7 @@ const Game = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEna
   };
 
   useEffect(() => {
-    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios') {
+    if (process.env.REACT_APP_ACTIVE_SYSTEM === 'android' || process.env.REACT_APP_ACTIVE_SYSTEM === 'ios' || process.env.REACT_APP_ACTIVE_SYSTEM === 'test') {
       AdMob.removeBanner().then(() => {
         showBannerAd();
       }).catch((error) => console.error("Failed to remove AdMob banner:", error));
