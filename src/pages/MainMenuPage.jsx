@@ -8,6 +8,9 @@ import { Storage } from '@capacitor/storage';
 import { useNavigate } from "react-router-dom";
 import SettingsDropdown from "../components/SettingsDropdown";
 import { AdMob, BannerAdPosition } from '@capacitor-community/admob';
+import playBtn from "../assets/UI/PlayBtn.png";
+import resumeBtn from "../assets/UI/ResumeBtn.png";
+import LayeredProgressBar from "../components/LayeredProgressBar";
 
 const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
@@ -276,20 +279,38 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
           </div>
         </div>
 
-        <button
-          className="bg-red-800 text-white px-4 py-2 rounded-lg text-lg"
+        <div
+          className="relative flex justify-center w-32 h-16 cursor-pointer"
           onClick={handleStartGame}
         >
-          Start New Game
-        </button>
+          <img
+            className="h-16"
+            src={playBtn}
+            alt="playbtn"
+          />
+
+          <span className="absolute text-white text-xl top-7">
+            Play !
+          </span>
+        </div>
+
+
 
         {hasSavedGame && (
-          <button
-            className="bg-orange-600 text-white px-4 py-2 rounded-lg text-lg text-center"
+          <div
+            className="relative flex justify-center w-32 h-16 cursor-pointer"
             onClick={handleResumeGame}
           >
-            Resume Last Game
-          </button>
+            <img
+              className="h-16"
+              src={resumeBtn}
+              alt="resumeBtn"
+            />
+
+            <span className="absolute text-white text-xl top-7">
+              Resume !
+            </span>
+          </div>
         )}
 
         <div className="space-x-4">
