@@ -10,7 +10,9 @@ import SettingsDropdown from "../components/SettingsDropdown";
 import { AdMob, BannerAdPosition } from '@capacitor-community/admob';
 import playBtn from "../assets/UI/PlayBtn.png";
 import resumeBtn from "../assets/UI/ResumeBtn.png";
-import LayeredProgressBar from "../components/LayeredProgressBar";
+import lbIcon from "../assets/UI/LeaderBoardIcon.png";
+import htpIcon from "../assets/UI/howToPlay.png";
+
 
 const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
   const navigate = useNavigate();
@@ -318,14 +320,14 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
             onClick={handleViewBestTimes}
             className="bg-emerald-500 rounded-md shadow-md w-fit p-2"
           >
-            <img src={chartBar} alt="chartbar" className="w-7 h-7" />
+            <img src={lbIcon} alt="chartbar" className="w-9 h-9" />
           </button>
 
           <button
             onClick={handleHowToPlay}
-            className="bg-yellow-500 rounded-md shadow-md w-fit p-2"
+            className="bg-blue-300 rounded-md shadow-md w-fit p-2"
           >
-            <img src={hat} alt="chartbar" className="w-7 h-7" />
+            <img src={htpIcon} alt="chartbar" className="w-9 h-9" />
           </button>
         </div>
 
