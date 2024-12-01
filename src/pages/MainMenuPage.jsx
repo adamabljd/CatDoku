@@ -2,8 +2,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import logo from "../assets/Catdoku-logo_rounded.png"
-import hat from '../assets/icons/academicHat.svg';
-import chartBar from "../assets/icons/chart_bar.svg"
 import { Storage } from '@capacitor/storage';
 import { useNavigate } from "react-router-dom";
 import SettingsDropdown from "../components/SettingsDropdown";
@@ -12,6 +10,10 @@ import playBtn from "../assets/UI/PlayBtn.png";
 import resumeBtn from "../assets/UI/ResumeBtn.png";
 import lbIcon from "../assets/UI/LeaderBoardIcon.png";
 import htpIcon from "../assets/UI/howToPlay.png";
+import mistakesIcon from '../assets/UI/mistakesUI.png';
+import heartFilled from '../assets/UI/heartFilled.png';
+import heartEmpty from '../assets/UI/heartEmpty.png';
+
 
 
 const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
@@ -21,6 +23,7 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
   const [hasSavedGame, setHasSavedGame] = useState(false);
   const [isDifficultyOpen, setIsDifficultyOpen] = useState(false);
   const [isMistakesOpen, setIsMistakesOpen] = useState(false);
+  const isInifity = useRef(false)
 
   const [isMediumUnlocked, setIsMediumUnlocked] = useState(false);
   const [isHardUnlocked, setIsHardUnlocked] = useState(false);
@@ -211,40 +214,46 @@ const MainMenuPage = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibr
       </div>
 
       <div className="flex-grow flex flex-col items-center justify-center space-y-4 mb-10">
-        <div className="flex items-center space-x-2">
-          <label className="text-md">Mistakes :</label>
-          <div className="relative inline-block text-left">
-            <button
-              onClick={() => setIsMistakesOpen(!isMistakesOpen)}
-              className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              {mistakesAllowed === Infinity ? "Unlimited" : mistakesAllowed}
-              <ChevronDownIcon aria-hidden="true" className="-mr-1 h-5 w-5 text-gray-400" />
-            </button>
+        <div className="flex items-center justify-center">
+          <div
+            className="relative flex justify-center h-10 cursor-pointer"
+          >
+            <img
+              className="h-10"
+              src={mistakesIcon}
+              alt="mistakesIcon"
+            />
 
-            {isMistakesOpen && (
-              <div className="absolute z-10 mt-2 w-fit origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
-                <div className="py-1">
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <p
-                      key={num}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
-                      onClick={() => handleMistakesSelect(num)}
-                    >
-                      {num}
-                    </p>
-                  ))}
-                  <p
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
-                    onClick={() => handleMistakesSelect(Infinity)}
-                  >
-                    &#8734;
-                  </p>
-                </div>
-              </div>
-            )}
+            <span className="absolute text-white text-md top-[0.65rem] ms-8">
+              Mistakes :
+            </span>
+          </div>
+
+          <div className="flex space-x-2 items-center ms-2">
+            {Array.from({ length: 5 }, (_, index) => (
+              <img
+                key={index}
+                src={index < mistakesAllowed ? heartFilled : heartEmpty}
+                alt="Heart"
+                className="w-4 h-4 cursor-pointer"
+                onClick={() => handleMistakesSelect(index + 1)}
+              />
+            ))}
+
+            <div className="relative flex justify-center cursor-pointer" onClick={() => handleMistakesSelect(Infinity)}>
+              <img
+                src={mistakesAllowed === Infinity ? heartFilled : heartEmpty}
+                alt="Heart"
+                className="w-6 h-6"
+              />
+              <span className="absolute text-xl text-black -top-[0.095rem]">
+                &#8734;
+              </span>
+            </div>
           </div>
         </div>
+
+
 
         <div className="flex items-center space-x-2">
           <label className="text-md">Difficulty :</label>

@@ -4,6 +4,7 @@ import houseLogo from '../assets/icons/house.svg';
 import videoLogo from '../assets/icons/video.svg';
 import { AdMob, InterstitialAdPluginEvents, RewardAdPluginEvents } from '@capacitor-community/admob';
 import LoadingScreen from '../pages/LoadingScreen';
+import gameLostUI from '../assets/UI/gameLostUI.png';
 
 const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd }) => {
     const navigate = useNavigate();
@@ -38,7 +39,7 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
                 case 'test':
                     await AdMob.prepareInterstitial({ adId: interTest });
                     await AdMob.showInterstitial();
-                    adShown = true;
+                    // adShown = true;
                     break;
                 default:
                     console.warn("No ad provider matched. Check REACT_APP_ACTIVE_SYSTEM value.");
@@ -160,32 +161,35 @@ const GameLost = ({ mistakes, setMistakes, setGameOver, setLoadingAd, setIsAd })
         <>
             {homeLoadingScreen && <LoadingScreen />}
             {!homeLoadingScreen && (
-                <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-60 bg-black z-40">
-                    <div className="text-center p-6 mx-2 bg-white rounded-lg shadow-lg max-w-full">
-                        <h2 className="text-4xl font-bold text-red-600 mb-4">Game Over!</h2>
-                        <p className="text-xl text-gray-700 mb-6">You've made <span className='font-bold text-red-600'>{mistakes}</span> mistakes!</p>
-                        <div className="flex items-center justify-center mt-4 mb-5">
-                            <button
-                                ref={extraMistakeButtonRef}
-                                className="bg-blue-500 shadow-md text-white text-lg rounded-md w-fit p-4 flex items-center justify-center font-bold"
-                                onClick={handleExtraMistakeClick}
-                            >
-                                Extra Mistake? Watch ad<img src={videoLogo} alt="adlogo" className="mx-2 h-6 w-6 shadow-sm" />
-                            </button>
-                            {showTooltip && (
-                                <div style={{ position: 'absolute', top: tooltipPosition.top, left: tooltipPosition.left }} className="bg-black text-white text-sm rounded-md p-2 shadow-lg z-50">
-                                    {tooltipMessage}
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex items-center justify-center mt-4 mb-5">
-                            <button
-                                className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
-                                onClick={handleReturnToMenu}
-                            >
-                                <img src={houseLogo} alt="house" className="h-7 w-7" />
-                            </button>
-                        </div>
+                <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-60 bg-black z-40 font-coffee">
+                    <div className='relative flex justify-center -mt-10 ms-2'>
+                        <img src={gameLostUI} alt='game lost ui' className='w-72' />
+                        <span className="absolute text-white text-3xl top-[4.2rem] -ms-2">
+                            Game Over !
+                        </span>
+                        <span className="absolute text-white text-md top-[6.2rem] -ms-2">
+                            You've made {mistakes} mistakes!
+                        </span>
+
+                        <button
+                            ref={extraMistakeButtonRef}
+                            className="absolute flex text-white text-sm top-[9.25rem]"
+                            onClick={handleExtraMistakeClick}
+                        >
+                            Extra Mistake? Watch ad<img src={videoLogo} alt="adlogo" className="mx-2 h-4 w-4 shadow-sm" />
+                        </button>
+                        {showTooltip && (
+                            <div style={{ position: 'absolute', top: tooltipPosition.top, left: tooltipPosition.left }} className="bg-black text-white text-sm rounded-md p-2 shadow-lg z-50">
+                                {tooltipMessage}
+                            </div>
+                        )}
+
+                        <button
+                            className="absolute flex top-[12.2rem] -ms-[0.45rem] p-2"
+                            onClick={handleReturnToMenu}
+                        >
+                            <img src={houseLogo} alt="house" className="h-7 w-7" />
+                        </button>
                     </div>
                 </div>
             )}
