@@ -10,12 +10,20 @@ import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import shareLogo from '../assets/icons/share.svg'
+import gameWonFrame from '../assets/UI/gameWonFrame.png';
+import greyBlock from '../assets/UI/greyBlock.png';
+import yellowBlock from '../assets/UI/yellowBlock.png';
+import roundedFrame from '../assets/UI/roundedFrame.png';
 
 const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins, soundEnabled, imageURL }) => {
     const navigate = useNavigate();
     const { width, height } = useWindowSize();
     const [showConfetti, setShowConfetti] = useState(true);
     const [loadingAd, setLoadingAd] = useState(false);
+
+    const isLandscape = width > height;
+
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const audio = new Audio(purrSound);
 
@@ -168,36 +176,60 @@ const GameWon = ({ bestTime, time, mistakes, maxMistakes, difficulty, totalWins,
                     {showConfetti && (
                         <Confetti width={width} height={height} recycle={true} numberOfPieces={500} />
                     )}
-                    <div className="text-center p-6 mx-2 bg-white rounded-lg shadow-lg max-w-full landscape:flex landscape:flex-row landscape:items-center">
-                        <div>
+                    <div className='relative flex portrait:justify-center ms-2'>
+                        <img src={gameWonFrame} alt='game won ui' className='w-[19rem] h-[30rem] landscape:w-[32rem] landscape:h-[20rem]' />
+                        <div className='absolute text-center mt-9 -ms-1 landscape:ms-9'>
                             {imageURL && (
                                 <div className="flex items-center justify-center mb-3">
                                     <img src={imageURL} alt="Completed Grid" className='h-52' />
                                 </div>
                             )}
-                            <h2 className="text-4xl text-green-600 mb-4">Congratulations!</h2>
-                            <p className="text-xl text-gray-700 mb-6">You've won the game!</p>
+                            <p className="text-4xl mb-6">You Won!</p>
                         </div>
-                        <div>
 
+                        <div className='absolute top-[19.5rem] flex items-center space-x-5 -ms-1 landscape:top-[5rem] landscape:left-[16.5rem]'>
+                            <div className='flex flex-col items-center'>
+                                <div className='relative flex justify-center items-center'>
+                                    <img src={roundedFrame} alt='your time frame' className='w-14' />
+                                    <p className={`absolute ${time.length > 6 ? "text-[0.5rem]" : "text-xs"} mt-2`}>
+                                        {time}
+                                    </p>
+                                </div>
+                                <p className='text-xs mt-[0.15rem]'>Your time</p>
+                            </div>
 
-                            <div className='flex justify-between mb-1'><p>Your Time : {time}</p> <p>Best Time : {bestTime}</p></div>
-                            {maxMistakes < 6 && <p className='mb-1'>Mistakes : {mistakes} / {maxMistakes}</p>}
-                            <p>Total wins in <span className='text-blue-700'>{difficulty}</span> with <span className='text-blue-700'>{maxMistakes < 6 ? maxMistakes : "Unlimited"}</span> mistakes : {totalWins}</p>
-                            <div className="flex items-center justify-center mt-4 mb-5 space-x-4">
-                                <button
-                                    className="bg-stone-400 shadow-md text-white rounded-md w-fit p-2"
-                                    onClick={handleReturnToMenu}
-                                >
-                                    <img src={houseLogo} alt="house" className="h-7 w-7" />
-                                </button>
-                                <button
-                                    className="bg-green-500 shadow-md text-white rounded-md w-fit p-2"
-                                    onClick={downloadGameTemplate}
-                                >
-                                    <img src={shareLogo} alt="share" className="h-7 w-7" />
-                                </button>
+                            <div className='flex flex-col items-center'>
+                                <div className='relative flex justify-center items-center'>
+                                    <img src={roundedFrame} alt='best time frame' className='w-14' />
+                                    <p className={`absolute ${bestTime.length > 6 ? "text-[0.5rem]" : "text-xs"} mt-2`}>
+                                        {bestTime}
+                                    </p>
+                                </div>
+                                <p className='text-xs mt-[0.15rem]'>Best time</p>
+                            </div>
 
+                            {maxMistakes < 6 && <div className='flex flex-col items-center'>
+                                <div className='relative flex justify-center items-center'>
+                                    <img src={roundedFrame} alt='mistakes frame' className='w-14' />
+                                    <p className='absolute text-xs mt-2'>
+                                        {mistakes} / {maxMistakes}
+                                    </p>
+                                </div>
+                                <p className='text-xs mt-[0.15rem]'>Mistakes</p>
+                            </div>}
+                        </div>
+
+                        <div className='absolute top-[25rem] flex flex-row space-x-4 -ms-1 landscape:top-[11rem] landscape:left-[19rem]'>
+                            <div className='relative flex justify-center items-center'
+                                onClick={handleReturnToMenu}>
+                                <img src={greyBlock} alt='Home button' className='w-14 aspect-square' />
+                                <img src={houseLogo} alt="house" className="absolute h-7 w-7" />
+                            </div>
+
+                            <div className='relative flex justify-center items-center'
+                                onClick={downloadGameTemplate}>
+                                <img src={yellowBlock} alt='your time frame' className='w-14 aspect-square' />
+                                <img src={shareLogo} alt="house" className="absolute h-7 w-7 -mt-[0.15rem]" />
                             </div>
                         </div>
                     </div>
