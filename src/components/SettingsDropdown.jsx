@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
-import soundOn from '../assets/icons/soundOn.svg'
-import soundOff from '../assets/icons/soundOff.svg'
-import vibrationON from '../assets/icons/vibrationOn.svg'
-import vibrationOff from '../assets/icons/vibrationOff.svg'
-import settingsIcon from '../assets/icons/settingsIcon.svg'
+import soundOn from '../assets/UI/SoundIcon.png'
+import soundOff from '../assets/UI/SoundOffIcon.png'
+import vibrationON from '../assets/UI/vibrationOn.png'
+import vibrationOff from '../assets/UI/vibrationOff.png'
+import settingsIcon from '../assets/UI/settingsIcon.png'
 
 const SettingsDropdown = ({ soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -30,15 +30,15 @@ const SettingsDropdown = ({ soundEnabled, setSoundEnabled, vibrationEnabled, set
     return (
         <div className="relative inline-block text-left">
             <button onClick={toggleDropdown} className=" flex items-center justify-center">
-                 <img src={settingsIcon} alt='settings' className='w-7 h-7 mt-1'/>
+                 <img src={settingsIcon} alt='settings' className='w-14 h-14'/>
             </button>
             {isDropdownOpen && (
-                <div className="absolute left-0 transform -translate-x-20 -translate-y-10 w-20  mt-1 bg-white rounded-md shadow-lg">
+                <div className="absolute left-0 transform -translate-x-[6.3rem] -translate-y-12 w-24 bg-white rounded-md shadow-lg">
                     <div className="p-2 flex flex-row space-x-2">
                         <div className="flex justify-between items-center">
                             <button
                                 onClick={toggleSound}
-                                className={`p-1 rounded-md ${soundEnabled ? 'bg-green-400' : 'bg-red-400'}`}
+                                className={`rounded-md flex items-center justify-center w-9 h-9 ${soundEnabled ? 'bg-green-400' : 'bg-red-400'}`}
                             >
                                 <img
                                     src={soundEnabled ? soundOn : soundOff}
@@ -50,7 +50,7 @@ const SettingsDropdown = ({ soundEnabled, setSoundEnabled, vibrationEnabled, set
                         <div className="flex justify-between items-center">
                             <button
                                 onClick={toggleVibration}
-                                className={`p-1 rounded-md ${vibrationEnabled ? 'bg-green-400' : 'bg-red-400'}`}
+                                className={`rounded-md flex items-center justify-center w-9 h-9 ${vibrationEnabled ? 'bg-green-400' : 'bg-red-400'}`}
                             >
                                 <img
                                     src={vibrationEnabled ? vibrationON : vibrationOff}
